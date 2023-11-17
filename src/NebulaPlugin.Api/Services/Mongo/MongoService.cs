@@ -1,4 +1,5 @@
 using NebulaPlugin.Api.Dtos.Mongo;
+
 using NebulaPlugin.Application.Mongo;
 
 
@@ -46,11 +47,5 @@ public class MongoService : IMongoService
     {
         await _manager.CreateDatabase(database.Name);
     }
-
-    
-
-
-
-
 
 }
