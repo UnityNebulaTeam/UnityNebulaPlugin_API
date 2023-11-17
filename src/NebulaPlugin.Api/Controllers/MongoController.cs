@@ -31,6 +31,7 @@ public class MongoController : BaseController
     {
         _service.DeleteDatabase(database);
         return Ok(201);
+
     }
 
     // http://localhost:3131/api/mongo/item 

@@ -1,7 +1,6 @@
 using NebulaPlugin.Api.Dtos.Mongo;
 
 namespace NebulaPlugin.Api.Services.Mongo;
-
 public class MongoService : IMongoService
 {
     public void DeleteDatabase(DeleteMongoDbDatabaseDto database)
@@ -29,5 +28,6 @@ public class MongoService : IMongoService
     public IEnumerable<ReadMongoDbTableDto> GetAllTables()
     {       
         throw new NotImplementedException();
+
     }
 }
