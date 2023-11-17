@@ -6,17 +6,19 @@ public class MongoService : IMongoService
 {
     public void DeleteDatabase(DeleteMongoDbDatabaseDto database)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(database);
     }
 
     public void DeleteItem(DeleteMongoDbItemDto item)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(item);
+
     }
 
     public void DeleteTable(DeleteMongoDbTableDto table)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(table);
+
     }
 
     public IEnumerable<MongoDbDatabaseDto> GetAllDatabases()
@@ -25,7 +27,7 @@ public class MongoService : IMongoService
     }
 
     public IEnumerable<ReadMongoDbTableDto> GetAllTables()
-    {
+    {       
         throw new NotImplementedException();
     }
 }
