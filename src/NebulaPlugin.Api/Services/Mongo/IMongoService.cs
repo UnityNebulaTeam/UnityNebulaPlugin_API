@@ -11,4 +11,5 @@ public interface IMongoService
     void DeleteDatabase(DeleteMongoDbDatabaseDto database);
     void DeleteTable(DeleteMongoDbTableDto table);
     void DeleteItem(DeleteMongoDbItemDto item);   
+
 }
