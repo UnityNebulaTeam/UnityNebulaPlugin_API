@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using NebulaPlugin.Application;
@@ -190,22 +191,18 @@ namespace NebulaPlugin.Application.Mongo
         /// Veritabanına bağlı tüm koleksiyonları okur
         /// </summary>
         /// <param name="dbName">Koleksiyonlarını görmek istediğiniz veritabanı</param>
-        public override async Task<bool> ReadTables(string dbName)
+        public override async Task<List<string>> ReadTables(string dbName)
         {
             try
             {
                 var db = client.GetDatabase(dbName);
-                var collections = await db.ListCollectionsAsync();
-                foreach (var collection in collections.ToList())
-                {
-                    Console.WriteLine(collection["name"].AsString);
-                }
-                return true;
+                var collections = await db.ListCollectionNamesAsync();
+                return collections.ToList();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Koleksiyonlar okunamadı {ex.Message}");
-                return false;
+                return null;
             }
         }
 
@@ -214,27 +211,27 @@ namespace NebulaPlugin.Application.Mongo
         /// </summary>
         /// <param name="dbName">Koleksiyonun bağlı olduğu veritabanı adı</param>
         /// <param name="tableName">Verilerin bağlı olduğu koleksiyon adı</param>
-        public override async Task<bool> ReadItems(string dbName, string tableName)
+        public override async Task<List<BsonDocument>> ReadItems(string dbName, string tableName)
         {
             try
             {
                 var db = client.GetDatabase(dbName);
                 var table = db.GetCollection<BsonDocument>(tableName);
                 var documents = await table.FindAsync(new BsonDocument());
-                foreach (var doc in documents.ToList())
-                {
-                    Console.WriteLine(doc);
-                }
-                return true;
+                return documents.ToList();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Itemler okunamadı {ex.Message}");
-                return false;
+                return null;
             }
         }
+
         #endregion
+
+
         #region Update
+
 
         /// <summary>
         /// Veritabanının adını günceller ve tüm koleksiyonları, koleksiyona bağlı verileri yeni oluşturulan veritabanına taşır.
