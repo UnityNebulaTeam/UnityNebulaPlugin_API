@@ -8,17 +8,17 @@ namespace NebulaPlugin.Application
 {
     public abstract class DatabaseManager
     {
-        public abstract void CreateDatabase(string dbName);
-        public abstract void CreateTable(string dbName, string tableName);
-        public abstract void CreateItem(string dbName, string tableName, BsonDocument doc);
-        public abstract void UpdateDatabase(string oldDbName, string newDbName);
-        public abstract void UpdateTable(string dbName, string oldTableName, string newTableName);
-        public abstract void UpdateItem(string dbName,string tableName,BsonDocument doc);
-        public abstract void ReadDatabases();
-        public abstract void ReadTables(string dbName);
-        public abstract void ReadItems(string dbName, string tableName);
-        public abstract void DeleteDatabase(string dbName);
-        public abstract void DeleteTable(string dbName,string tableName);
-        public abstract void DeleteItem(string dbName, string tableName, string id);
+        public abstract Task<bool> CreateDatabase(string dbName);
+        public abstract Task<bool> CreateTable(string dbName, string tableName);
+        public abstract Task<bool> CreateItem(string dbName, string tableName, BsonDocument doc);
+        public abstract Task<bool> UpdateDatabase(string oldDbName, string newDbName);
+        public abstract Task<bool> UpdateTable(string dbName, string oldTableName, string newTableName);
+        public abstract Task<bool> UpdateItem(string dbName,string tableName,BsonDocument doc);
+        public abstract Task<List<string>> ReadDatabases();
+        public abstract Task<bool> ReadTables(string dbName);
+        public abstract Task<bool> ReadItems(string dbName, string tableName);
+        public abstract Task<bool> DeleteDatabase(string dbName);
+        public abstract Task<bool> DeleteTable(string dbName,string tableName);
+        public abstract Task<bool> DeleteItem(string dbName, string tableName, string id);
     }
 }
