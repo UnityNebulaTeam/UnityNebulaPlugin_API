@@ -5,8 +5,9 @@ namespace NebulaPlugin.Api.Services.Mongo;
 public class MongoService : IMongoService
 {
     private const string connectionURL = "mongodb+srv://Victory:7Aynras2-@gameserver.ptrocqn.mongodb.net/?retryWrites=true&w=majority";
-    public async Task TestGetDatabases()
+    public async Task<List<BsonDocument>> TestGetDatabases()
     {
         MongoManagement mongo = new MongoManagement(connectionURL);
+        return await mongo.ReadItems("Users", "userItems");
     }
 }
