@@ -12,7 +12,7 @@ public class MongoController : BaseController
 
     #region CREATE Methods
     [HttpPost("db")]
-    public async Task<ActionResult> CreateDatabase(CreateMongoDbDatabaseDto database)
+    public async Task<ActionResult> CreateDatabase([FromForm]CreateMongoDbDatabaseDto database)
     {
         await _service.CreateDatabaseAsync(database);
         return Ok(Results.Created());
