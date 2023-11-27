@@ -30,6 +30,13 @@ public class MongoController : BaseController
         return OkOrNotFound(result);
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<string>>> GetTables([FromQuery] string dbName)
+    {
+        var result = await _service.GetAllDatabaseTablesAsync(dbName);
+        return Ok(result);
+    }
+
 
     #endregion
 

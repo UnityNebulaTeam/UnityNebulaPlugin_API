@@ -41,6 +41,11 @@ public class MongoService : IMongoService
         return result;
     }
 
+    public async Task<List<string>> GetAllDatabaseTablesAsync(string dbName)
+    {
+        var result = await _manager.ReadTables(dbName);
+        return result;
+    }
     //CREATE 
     public async Task CreateDatabaseAsync(CreateMongoDbDatabaseDto database)
     {
