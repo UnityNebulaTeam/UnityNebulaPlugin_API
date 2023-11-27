@@ -6,10 +6,8 @@ public interface IMongoService
 {
     //CREATE
     Task CreateDatabaseAsync(CreateMongoDbDatabaseDto database);
-
     //READ
     Task<List<MongoDbDatabaseDto>> GetAllDatabasesAsync();    
-
     Task DeleteDatabaseAsync(DeleteMongoDbDatabaseDto database);
     Task DeleteTableAsync(DeleteMongoDbTableDto table);
     Task DeleteItemAsync(DeleteMongoDbItemDto item);   
