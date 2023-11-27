@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+<<<<<<< HEAD
+=======
+using NebulaPlugin.Application.Mongo;
+>>>>>>> Mongo
 
 namespace NebulaPlugin.Application
 {
@@ -15,8 +19,13 @@ namespace NebulaPlugin.Application
         public abstract Task<bool> UpdateTable(string dbName, string oldTableName, string newTableName);
         public abstract Task<bool> UpdateItem(string dbName,string tableName,BsonDocument doc);
         public abstract Task<List<string>> ReadDatabases();
+<<<<<<< HEAD
         public abstract Task<bool> ReadTables(string dbName);
         public abstract Task<bool> ReadItems(string dbName, string tableName);
+=======
+        public abstract Task<List<string>> ReadTables(string dbName);
+        public abstract Task<List<BsonDocument>> ReadItems(string dbName, string tableName);
+>>>>>>> Mongo
         public abstract Task<bool> DeleteDatabase(string dbName);
         public abstract Task<bool> DeleteTable(string dbName,string tableName);
         public abstract Task<bool> DeleteItem(string dbName, string tableName, string id);

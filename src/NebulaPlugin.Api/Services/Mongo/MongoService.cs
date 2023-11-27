@@ -4,7 +4,6 @@ using NebulaPlugin.Application.Mongo;
 
 
 namespace NebulaPlugin.Api.Services.Mongo;
-
 public class MongoService : IMongoService
 {
     private readonly MongoManagement _manager;
