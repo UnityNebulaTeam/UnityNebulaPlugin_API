@@ -186,6 +186,8 @@ public class MongoManagement : DatabaseManager
     /// Veritabanına bağlı tüm koleksiyonları okur
     /// </summary>
     /// <param name="dbName">Koleksiyonlarını görmek istediğiniz veritabanı</param>
+    
+    //TODO: Wrong Data Returns: this method must be return db collection name but returns db names. 
     public override async Task<List<string>> ReadTables(string dbName)
     {
         List<string> result = new();
