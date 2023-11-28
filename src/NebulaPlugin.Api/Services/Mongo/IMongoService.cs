@@ -5,14 +5,14 @@ namespace NebulaPlugin.Api.Services.Mongo;
 public interface IMongoService
 {
     //CREATE
-    Task CreateDatabaseAsync(CreateMongoDbDatabaseDto database);
+    Task CreateDatabaseAsync(CreateDatabaseDto database);
     //READ
-    Task<List<MongoDbDatabaseDto>> GetAllDatabasesAsync();    
+    Task<List<ReadDatabaseDto>> GetAllDatabasesAsync();    
     Task<List<string>> GetAllDatabaseTablesAsync(string dbName);
 
     //DELETE
-    Task DeleteDatabaseAsync(DeleteMongoDbDatabaseDto database);
-    Task DeleteTableAsync(DeleteMongoDbTableDto table);
-    Task DeleteItemAsync(DeleteMongoDbItemDto item);   
+    Task DeleteDatabaseAsync(DeleteDatabaseDto database);
+    Task DeleteTableAsync(DeleteTableDto table);
+    Task DeleteItemAsync(DeleteItemDto item);   
 
 }

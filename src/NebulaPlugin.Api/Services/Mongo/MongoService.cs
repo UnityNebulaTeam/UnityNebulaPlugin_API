@@ -13,28 +13,28 @@ public class MongoService : IMongoService
     }
 
     // DELETE
-    public async Task DeleteDatabaseAsync(DeleteMongoDbDatabaseDto database)
+    public async Task DeleteDatabaseAsync(DeleteDatabaseDto database)
     {
         await _manager.DeleteDatabase(database.Name);
     }
-    public async Task DeleteItemAsync(DeleteMongoDbItemDto item)
+    public async Task DeleteItemAsync(DeleteItemDto item)
     {
         await _manager.DeleteItem(item.DbName, item.Name, item.Id);
 
     }
-    public async Task DeleteTableAsync(DeleteMongoDbTableDto table)
+    public async Task DeleteTableAsync(DeleteTableDto table)
     {
         await _manager.DeleteTable(table.DbName, table.Name);
     }
 
     // READ
-    public async Task<List<MongoDbDatabaseDto>> GetAllDatabasesAsync()
+    public async Task<List<ReadDatabaseDto>> GetAllDatabasesAsync()
     {
-        List<MongoDbDatabaseDto> result = new();
+        List<ReadDatabaseDto> result = new();
         var databases = await _manager.ReadDatabases();
         foreach (var item in databases)
         {
-            var dbItem = new MongoDbDatabaseDto{Name = item};
+            var dbItem = new ReadDatabaseDto{Name = item};
             result.Add(dbItem);
         }
 
@@ -47,7 +47,7 @@ public class MongoService : IMongoService
         return result;
     }
     //CREATE 
-    public async Task CreateDatabaseAsync(CreateMongoDbDatabaseDto database)
+    public async Task CreateDatabaseAsync(CreateDatabaseDto database)
     {
         await _manager.CreateDatabase(database.Name);
     }

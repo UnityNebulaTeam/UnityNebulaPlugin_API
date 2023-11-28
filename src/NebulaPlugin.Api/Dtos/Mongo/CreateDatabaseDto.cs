@@ -1,6 +1,6 @@
 namespace NebulaPlugin.Api.Dtos.Mongo;
 
-public class CreateMongoDbDatabaseDto
+public class CreateDatabaseDto
 {
     public string Name { get; set; } = null!;
 }
