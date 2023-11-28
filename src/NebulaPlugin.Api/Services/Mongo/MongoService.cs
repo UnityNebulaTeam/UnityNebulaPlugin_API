@@ -12,7 +12,7 @@ public class MongoService : IMongoService
         _manager = new("mongodb+srv://Victory:7Aynras2-@gameserver.ptrocqn.mongodb.net/?retryWrites=true&w=majority");
     }
 
-    // DELETE
+    #region DELETE
     public async Task DeleteDatabaseAsync(DeleteDatabaseDto database)
     {
         await _manager.DeleteDatabase(database.Name);
@@ -27,29 +27,66 @@ public class MongoService : IMongoService
         await _manager.DeleteTable(table.DbName, table.Name);
     }
 
-    // READ
+    #endregion
+    #region READ
     public async Task<List<ReadDatabaseDto>> GetAllDatabasesAsync()
     {
         List<ReadDatabaseDto> result = new();
         var databases = await _manager.ReadDatabases();
         foreach (var item in databases)
         {
-            var dbItem = new ReadDatabaseDto{Name = item};
+            var dbItem = new ReadDatabaseDto { Name = item };
             result.Add(dbItem);
         }
 
         return result;
     }
-
-    public async Task<List<string>> GetAllDatabaseTablesAsync(string dbName)
+    public async Task<List<TableDto>> GetAllTablesAsync(ReadTableDto table)
     {
-        var result = await _manager.ReadTables(dbName);
-        return result;
+        List<TableDto> tables = new();
+        var dbTables = await _manager.ReadTables(table.DbName);
+        dbTables.ForEach(t => tables.Add(new TableDto { Name = t }));
+        return tables;
     }
-    //CREATE 
+    public async Task<List<TableItemDto>> GetAllTableItemsAsync(ReadTableItemsDto item)
+    {
+        List<TableItemDto> tableItems = new();
+        var dbTableItems = await _manager.ReadItems(item.DbName, item.TableName);
+        dbTableItems.ForEach(i => tableItems.Add(new TableItemDto { Doc = i }));
+
+        return tableItems;
+    }
+
+    #endregion
+    #region INSERT
     public async Task CreateDatabaseAsync(CreateDatabaseDto database)
     {
         await _manager.CreateDatabase(database.Name);
     }
+    public async Task CreateTableAsync(CreateTableDto table)
+    {
+        await _manager.CreateTable(table.DbName, table.Name);
+    }
+    public async Task CreateItemAsync(CreateTableItemDto item)
+    {
+        await _manager.CreateItem(item.DbName, item.TableName, item.doc);
+    }
+
+    #endregion
+    #region UPDATE
+    public async Task UpdateDatabase(UpdateDatabaseDto database)
+    {
+        await _manager.UpdateDatabase(database.Name, database.NewDbName);
+    }
+    public async Task UpdateTable(UpdateTableDto table)
+    {
+        await _manager.UpdateTable(table.DbName, table.Name, table.NewTableName);
+    }
+    public async Task UpdateTableItem(UpdateTableItemDto item)
+    {
+        await _manager.UpdateItem(item.DbName, item.TableName, item.Doc);
+    }
+
+    #endregion
 
 }
