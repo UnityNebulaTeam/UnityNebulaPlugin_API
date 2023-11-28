@@ -275,14 +275,15 @@ public class MongoManagement : DatabaseManager
             var documents = table.Find(new BsonDocument()).ToList();
             await client.GetDatabase(dbName).CreateCollectionAsync(newTableName);
             var collection = client.GetDatabase(dbName).GetCollection<BsonDocument>(newTableName);
-            await collection.InsertManyAsync(documents);
+            if (documents.Count > 0)
+                await collection.InsertManyAsync(documents);
             await db.DropCollectionAsync(oldTableName);
-            Console.WriteLine("Veritabanı Güncellendi");
+            Console.WriteLine("Table  Güncellendi");
             return false;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Veritabanı Güncellendi {ex.Message}");
+            Console.WriteLine($"Table Guncellenmedi {ex.Message}");
             return false;
         }
     }
