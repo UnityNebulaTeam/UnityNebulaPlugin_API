@@ -1,6 +1,3 @@
 namespace NebulaPlugin.Api.Dtos.Mongo;
 
-public class ReadDatabaseDto
-{
-    public string Name { get; set; }
-}
+public record ReadDatabaseDto(string Name);

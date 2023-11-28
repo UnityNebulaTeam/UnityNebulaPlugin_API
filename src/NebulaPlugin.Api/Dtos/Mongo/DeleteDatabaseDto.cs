@@ -1,7 +1,4 @@
 
 namespace NebulaPlugin.Api.Dtos.Mongo;
 
-public class DeleteDatabaseDto
-{
-    public string Name { get; set; } = null!;
-}
+public record DeleteDatabaseDto(string Name);

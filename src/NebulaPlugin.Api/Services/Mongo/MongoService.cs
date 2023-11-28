@@ -35,7 +35,7 @@ public class MongoService : IMongoService
         var databases = await _manager.ReadDatabases();
         foreach (var item in databases)
         {
-            var dbItem = new ReadDatabaseDto { Name = item };
+            var dbItem = new ReadDatabaseDto(item);
             result.Add(dbItem);
         }
 
@@ -45,14 +45,14 @@ public class MongoService : IMongoService
     {
         List<TableDto> tables = new();
         var dbTables = await _manager.ReadTables(table.DbName);
-        dbTables.ForEach(t => tables.Add(new TableDto { Name = t }));
+        dbTables.ForEach(t => tables.Add(new TableDto(t)));
         return tables;
     }
     public async Task<List<TableItemDto>> GetAllTableItemsAsync(ReadTableItemsDto item)
     {
         List<TableItemDto> tableItems = new();
         var dbTableItems = await _manager.ReadItems(item.DbName, item.TableName);
-        dbTableItems.ForEach(i => tableItems.Add(new TableItemDto { Doc = i }));
+        dbTableItems.ForEach(i => tableItems.Add(new TableItemDto(i)));
 
         return tableItems;
     }
@@ -69,7 +69,7 @@ public class MongoService : IMongoService
     }
     public async Task CreateItemAsync(CreateTableItemDto item)
     {
-        await _manager.CreateItem(item.DbName, item.TableName, item.doc);
+        await _manager.CreateItem(item.DbName, item.TableName, item.Doc);
     }
 
     #endregion
