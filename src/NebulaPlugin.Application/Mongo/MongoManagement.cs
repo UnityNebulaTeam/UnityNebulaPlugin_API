@@ -238,20 +238,25 @@ public class MongoManagement : DatabaseManager
         {
             var oldDatabase = client.GetDatabase(oldDbName);
             var newDatabase = client.GetDatabase(newDbName);
+
             var collectionNames = await oldDatabase.ListCollectionNamesAsync();
             foreach (var collectionName in collectionNames.ToList())
             {
                 var oldCollection = oldDatabase.GetCollection<BsonDocument>(collectionName);
                 var newCollection = newDatabase.GetCollection<BsonDocument>(collectionName);
                 var documents = oldCollection.Find(new BsonDocument()).ToList();
-                newCollection.InsertMany(documents);
+                if (documents.Count > 0)
+                    newCollection.InsertMany(documents);
+                else
+                    await newDatabase.CreateCollectionAsync("deneme");
             }
             await client.DropDatabaseAsync(oldDbName);
+            Console.WriteLine("Veritabanı Güncellendi");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Veritabanı güncellenemedi {ex.Message}");
+            Console.WriteLine($"Veritabanı güncellenemedi {ex.Message} {ex.InnerException}");
             return false;
         }
     }
