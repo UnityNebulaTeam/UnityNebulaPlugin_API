@@ -186,26 +186,20 @@ public class MongoManagement : DatabaseManager
     /// Veritabanına bağlı tüm koleksiyonları okur
     /// </summary>
     /// <param name="dbName">Koleksiyonlarını görmek istediğiniz veritabanı</param>
-    
+
     //TODO: Wrong Data Returns: this method must be return db collection name but returns db names. 
     public override async Task<List<string>> ReadTables(string dbName)
     {
-        List<string> result = new();
         try
         {
-            var databases = await client.ListDatabaseNames().ToListAsync();
+            var db = client.GetDatabase(dbName);
+            var collections = await db.ListCollectionNamesAsync();
 
-            foreach (var db in databases.ToList())
-            {
-                result.Add(db);
-            }
-
-            return result;
-
+            return collections.ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Veritabanları okunamadı. Hata kodu {ex.Message}");
+            Console.WriteLine($"Koleksiyonlar okunamadı {ex.Message}");
             return null;
         }
     }
