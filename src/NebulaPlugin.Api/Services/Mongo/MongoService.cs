@@ -1,3 +1,6 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
 using NebulaPlugin.Api.Dtos.Mongo;
 
 using NebulaPlugin.Application.Mongo;
@@ -15,8 +18,14 @@ public class MongoService : IMongoService
     #region DELETE
     public async Task DeleteDatabaseAsync(DeleteDatabaseDto database)
     {
-        await _manager.DeleteDatabase(database.Name);
+        var created = await _manager.DeleteDatabase(database.Name);
+
+        if (!created)
+            throw new Exception($"database deletion failed:{database.Name}");
+
+        // return new DeleteDatabaseDto(database.Name);
     }
+
     public async Task DeleteItemAsync(DeleteItemDto item)
     {
         await _manager.DeleteItem(item.DbName, item.Name, item.Id);
@@ -84,7 +93,8 @@ public class MongoService : IMongoService
     }
     public async Task UpdateTableItem(UpdateTableItemDto item)
     {
-        await _manager.UpdateItem(item.DbName, item.TableName, item.Doc);
+        BsonDocument bsonDoc = BsonDocument.Parse(item.Doc.ToJson());
+        await _manager.UpdateItem(item.DbName, item.TableName, bsonDoc);
     }
 
     #endregion

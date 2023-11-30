@@ -111,7 +111,7 @@ public class MongoController : BaseController
     }
 
     [HttpPut("item")]
-    public async Task<ActionResult> UpdateTableItem([FromForm] UpdateTableItemDto item)
+    public async Task<ActionResult> UpdateTableItem([FromBody] UpdateTableItemDto item)
     {
         await _service.UpdateTableItem(item);
         return Ok(Results.Created());
