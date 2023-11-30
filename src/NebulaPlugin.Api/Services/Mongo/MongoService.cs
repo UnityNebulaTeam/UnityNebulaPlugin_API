@@ -1,4 +1,5 @@
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using NebulaPlugin.Api.Dtos.Mongo;
 
 using NebulaPlugin.Application.Mongo;
@@ -91,7 +92,10 @@ public class MongoService : IMongoService
     }
     public async Task UpdateTableItem(UpdateTableItemDto item)
     {
-        BsonDocument bsonDoc = BsonDocument.Parse(item.Doc.ToJson());
+        Console.WriteLine(item.Doc);
+        BsonDocument bsonDoc = BsonDocument.Parse(item.Doc.ToString());
+        bsonDoc["_id"]=new ObjectId(bsonDoc["_id"].AsString);
+        Console.WriteLine(bsonDoc);
         await _manager.UpdateItem(item.DbName, item.TableName, bsonDoc);
     }
 
