@@ -46,9 +46,6 @@ public class MongoController : BaseController
 
     }
 
-
-
-
     #endregion
 
     #region TABLE Enpoints
@@ -74,15 +71,15 @@ public class MongoController : BaseController
         await _service.DeleteTableAsync(table);
         return Ok(Results.NoContent());
 
-    }  
-    
+    }
+
     [HttpPut("table")]
     public async Task<ActionResult> UpdateTable([FromForm] UpdateTableDto table)
     {
         await _service.UpdateTable(table);
         return Ok(Results.NoContent());
     }
-    
+
     #endregion
 
     #region TABLE ITEM Endpoints
@@ -94,7 +91,7 @@ public class MongoController : BaseController
         return Ok(Results.NoContent());
 
     }
-    
+
     [HttpPost("item")]
     public async Task<ActionResult> CreateTableItemAsync([FromForm] CreateTableItemDto item)
     {
@@ -108,7 +105,8 @@ public class MongoController : BaseController
     public async Task<ActionResult<List<TableItemDto>>> GetTableItems([FromQuery] ReadTableItemsDto item)
     {
         var result = await _service.GetAllTableItemsAsync(item);
-        return OkOrNotFound(result);
+        var jsonObj = Helpers.Helper.ConvertBsonDocumentToJson(result);
+        return Ok(jsonObj);
 
     }
 
@@ -120,6 +118,4 @@ public class MongoController : BaseController
     }
 
     #endregion
-
-
 }

@@ -1,5 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
+using NebulaPlugin.Api.Dtos.Mongo;
+using Newtonsoft.Json;
 
 namespace NebulaPlugin.Api.Helpers;
 
@@ -32,6 +34,26 @@ public static class Helper
         var bsonDocument = BsonDocument.Parse(doc.ToJson());
         var settings = new JsonWriterSettings { Indent = true };
         var jsonOutput = bsonDocument.ToJson(settings);
+        return jsonOutput;
+    }
+
+    public static string ConvertBsonDocumentToJson(List<TableItemDto> result)
+    {
+
+        var bsonArray = new BsonArray();
+
+        foreach (var tableItemDto in result)
+        {
+            if (tableItemDto.Doc != null)
+            {
+                bsonArray.Add(tableItemDto.Doc);
+            }
+        }
+
+        var bsonDocument = new BsonDocument { { "items", bsonArray } };
+        var settings = new JsonWriterSettings { Indent = true };
+        var jsonOutput = bsonArray.ToJson(settings);
+
         return jsonOutput;
     }
 }
