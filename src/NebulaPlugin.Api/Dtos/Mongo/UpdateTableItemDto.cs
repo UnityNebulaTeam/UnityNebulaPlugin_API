@@ -1,11 +1,10 @@
 using System.Text.Json;
-using MongoDB.Bson;
 
 namespace NebulaPlugin.Api.Dtos.Mongo;
 
-public record UpdateTableItemDto(string DbName, string TableName)
+public class UpdateTableItemDto
 {
-    public string DbName { get; init; }
-    public string TableName { get; init; }
-    public JsonElement Doc { get; init; }
+    public string DbName { get; set; }
+    public string TableName { get; set; }
+    public JsonElement Doc { get; set; }
 }
