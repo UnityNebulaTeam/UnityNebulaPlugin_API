@@ -15,7 +15,7 @@ public class MongoController : BaseController
 
 
     [HttpPost("db")]
-    public async Task<ActionResult> CreateDatabase([FromForm] CreateDatabaseDto database)
+    public async Task<ActionResult> CreateDatabase([FromBody] CreateDatabaseDto database)
     {
         var res = await _service.CreateDatabaseAsync(database);
         return Ok(res);
@@ -39,7 +39,7 @@ public class MongoController : BaseController
     }
 
     [HttpPut("db")]
-    public async Task<ActionResult> UpdateDatabase([FromForm] UpdateDatabaseDto database)
+    public async Task<ActionResult> UpdateDatabase([FromBody] UpdateDatabaseDto database)
     {
         var res = await _service.UpdateDatabase(database);
         return Ok(res);
@@ -51,7 +51,7 @@ public class MongoController : BaseController
     #region TABLE Enpoints
 
     [HttpPost("table")]
-    public async Task<ActionResult> CreateTableAsync([FromForm] CreateTableDto table)
+    public async Task<ActionResult> CreateTableAsync([FromBody] CreateTableDto table)
     {
         var res = await _service.CreateTableAsync(table);
         return Ok(res);
@@ -74,7 +74,7 @@ public class MongoController : BaseController
     }
 
     [HttpPut("table")]
-    public async Task<ActionResult> UpdateTable([FromForm] UpdateTableDto table)
+    public async Task<ActionResult> UpdateTable([FromBody] UpdateTableDto table)
     {
         var res = await _service.UpdateTable(table);
         return Ok(res);
