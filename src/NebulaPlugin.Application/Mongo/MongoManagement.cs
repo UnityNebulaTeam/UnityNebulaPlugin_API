@@ -31,7 +31,7 @@ public class MongoManagement : DatabaseManager
         {
             await client.GetDatabase(dbName).CreateCollectionAsync(tableName);
             Console.WriteLine($" Veritabanı Oluşturuldu");
-            return true;
+            return false;
         }
         catch (Exception ex)
         {

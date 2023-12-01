@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NebulaPlugin.Application\NebulaPlugin.Application.csproj" />
+    <ProjectReference Include="..\NebulaPlugin.Common\NebulaPlugin.Common.csproj" />
   </ItemGroup>
 
 </Project>

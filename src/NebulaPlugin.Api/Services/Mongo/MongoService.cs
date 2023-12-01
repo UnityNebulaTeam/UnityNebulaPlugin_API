@@ -1,9 +1,11 @@
 using System.Text.Json;
 using MongoDB.Bson;
+using MongoDB.Driver;
 using NebulaPlugin.Api.Dtos.Mongo;
 using NebulaPlugin.Api.Dtos.Mongo.Responses;
 using NebulaPlugin.Api.Helpers;
 using NebulaPlugin.Application.Mongo;
+using NebulaPlugin.Common.Exceptions.MongoExceptions;
 using ZstdSharp.Unsafe;
 
 
@@ -84,7 +86,7 @@ public class MongoService : IMongoService
         var created = await _manager.CreateDatabase(database.Name, database.TableName);
 
         if (!created)
-            throw new Exception($"'{database.Name}' database creation failed");
+            throw new MongoOperationFailedException(database.Name, "create failed");
 
         return new(database.Name);
     }

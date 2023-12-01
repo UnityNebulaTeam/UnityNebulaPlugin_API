@@ -1,8 +1,7 @@
-using System.Net;
-using System.Text.Json;
-using Amazon.Runtime.Internal;
 using Microsoft.AspNetCore.Diagnostics;
 using NebulaPlugin.Api.Services.Mongo;
+using NebulaPlugin.Common.Exceptions.MongoExceptions;
+using src.NebulaPlugin.Common;
 
 namespace NebulaPlugin.Api;
 
@@ -25,15 +24,32 @@ public static class Extensions
                 var contextFeature = context.Features.Get<IExceptionHandlerPathFeature>();
                 if (contextFeature != null)
                 {
-                    ErrorResponse errorResponse = new()
-                    {
-                        StatusCode = (HttpStatusCode)context.Response.StatusCode,
-                        Message = contextFeature.Error.Message
-                    };
+                    ErrorResponse errorResponse = new();
 
-                    var json = JsonSerializer.Serialize(errorResponse);
-                    Console.WriteLine("-------->" + json);
-                    await context.Response.WriteAsync(json);
+                    switch (contextFeature.Error)
+                    {
+                        case MongoNotFoundException notFoundException:
+                            context.Response.StatusCode = (int)notFoundException.StatusCode;
+                            errorResponse.Message = notFoundException.Message;
+                            break;
+
+                        case MongoAlreadyExistException alreadyExistException:
+                            context.Response.StatusCode = (int)alreadyExistException.StatusCode;
+                            errorResponse.Message = alreadyExistException.Message;
+                            break;
+
+                        case MongoOperationFailedException operationFailedException:
+                            context.Response.StatusCode = (int)operationFailedException.StatusCode;
+                            errorResponse.Message = operationFailedException.Message;
+                            break;
+
+                        default:
+                            errorResponse.Message = contextFeature.Error.Message;
+                            break;
+                    }
+
+
+                    await context.Response.WriteAsync(errorResponse.ToString());
                 }
             });
         });
