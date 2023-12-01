@@ -25,11 +25,11 @@ public class MongoManagement : DatabaseManager
     /// Yeni bir veritabanı oluşturmak için
     /// </summary>
     /// <param name="dbName">Veritabanı adı</param>
-    public override async Task<bool> CreateDatabase(string dbName)
+    public override async Task<bool> CreateDatabase(string dbName, string tableName)
     {
         try
         {
-            await client.GetDatabase(dbName).CreateCollectionAsync("Deneme");
+            await client.GetDatabase(dbName).CreateCollectionAsync(tableName);
             Console.WriteLine($" Veritabanı Oluşturuldu");
             return true;
         }

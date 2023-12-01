@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MongoDB.Bson;
-using NebulaPlugin.Application.Mongo;
 namespace NebulaPlugin.Application
 {
-        public abstract class DatabaseManager
+    public abstract class DatabaseManager
         {
-                public abstract Task<bool> CreateDatabase(string dbName);
+                public abstract Task<bool> CreateDatabase(string dbName, string tableName);
                 public abstract Task<bool> CreateTable(string dbName, string tableName);
                 public abstract Task<bool> CreateItem(string dbName, string tableName, BsonDocument doc);
                 public abstract Task<bool> UpdateDatabase(string oldDbName, string newDbName);

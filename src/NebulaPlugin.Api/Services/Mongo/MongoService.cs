@@ -81,7 +81,7 @@ public class MongoService : IMongoService
     #region INSERT
     public async Task<DatabaseResponse> CreateDatabaseAsync(CreateDatabaseDto database)
     {
-        var created = await _manager.CreateDatabase(database.Name);
+        var created = await _manager.CreateDatabase(database.Name, database.TableName);
 
         if (!created)
             throw new Exception($"'{database.Name}' database creation failed");
