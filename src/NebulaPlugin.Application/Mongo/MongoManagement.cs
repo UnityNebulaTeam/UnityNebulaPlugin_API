@@ -54,8 +54,7 @@ public class MongoManagement : DatabaseManager
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Tablo oluşturulamadı  {ex.Message}");
-            return false;
+            throw new Exception(ex.Message);
         }
 
     }
@@ -70,15 +69,17 @@ public class MongoManagement : DatabaseManager
     {
         try
         {
+            doc["_id"] = ObjectId.GenerateNewId();
             await client.GetDatabase(dbName).GetCollection<BsonDocument>(tableName).InsertOneAsync(doc);
             Console.WriteLine("Veri Seti Eklendi");
+
             return true;
 
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Veri oluşturulamadı. Hata Mesajı : {ex.Message}");
-            return false;
+            throw new Exception(ex.Message);
         }
     }
 
@@ -111,16 +112,24 @@ public class MongoManagement : DatabaseManager
     /// <param name="tableName">Koleksiyonun adı</param>
     public override async Task<bool> DeleteTable(string dbName, string tableName)
     {
+        var database = client.GetDatabase(dbName);
+        var collectionExists = await CheckIfCollectionExists(database, tableName);
+
+        if (!collectionExists)
+            throw new Exception($"'{tableName}' collection not found");
+
+
         try
         {
-            await client.GetDatabase(dbName).DropCollectionAsync(tableName);
-            Console.WriteLine($"{dbName} koleksiyon silindi");
+            await database.DropCollectionAsync(tableName);
+            Console.WriteLine($"{tableName} koleksiyonu silindi");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{dbName} koleksiyon silinemedi. Hata kodu {ex.Message}");
-            return false;
+            Console.WriteLine($"{tableName} koleksiyonu silinemedi. Hata kodu: {ex.Message}");
+            throw new Exception(ex.Message);
+
         }
     }
 
@@ -155,6 +164,7 @@ public class MongoManagement : DatabaseManager
 
 
     #endregion
+
     #region Read
 
     /// <summary>
@@ -225,6 +235,7 @@ public class MongoManagement : DatabaseManager
         }
     }
     #endregion
+
     #region Update
 
     /// <summary>
@@ -268,9 +279,15 @@ public class MongoManagement : DatabaseManager
     /// <param name="newTableName">Yeni koleksiyon adı</param>
     public override async Task<bool> UpdateTable(string dbName, string oldTableName, string newTableName)
     {
+        var db = client.GetDatabase(dbName);
+        var collectionExistsOld = await CheckIfCollectionExists(db, oldTableName);
+
+        if (!collectionExistsOld)
+            throw new Exception($"'{oldTableName}' collection not found");
+
+
         try
         {
-            var db = client.GetDatabase(dbName);
             var table = db.GetCollection<BsonDocument>(oldTableName);
             var documents = table.Find(new BsonDocument()).ToList();
             await client.GetDatabase(dbName).CreateCollectionAsync(newTableName);
@@ -279,12 +296,13 @@ public class MongoManagement : DatabaseManager
                 await collection.InsertManyAsync(documents);
             await db.DropCollectionAsync(oldTableName);
             Console.WriteLine("Table  Güncellendi");
-            return false;
+            return true;
         }
         catch (Exception ex)
         {
+            throw new Exception(ex.Message);
             Console.WriteLine($"Table Guncellenmedi {ex.Message}");
-            return false;
+
         }
     }
     /// <summary>
@@ -312,4 +330,12 @@ public class MongoManagement : DatabaseManager
         }
     }
     #endregion
+
+
+    private async Task<bool> CheckIfCollectionExists(IMongoDatabase database, string collectionName)
+    {
+        var filter = new BsonDocument("name", collectionName);
+        var collections = await database.ListCollectionsAsync(new ListCollectionsOptions { Filter = filter });
+        return await collections.AnyAsync();
+    }
 }

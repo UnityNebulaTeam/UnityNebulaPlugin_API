@@ -2,9 +2,9 @@ using System.Text.Json;
 
 namespace NebulaPlugin.Api.Dtos.Mongo;
 
-public class UpdateTableItemDto
+public record UpdateTableItemDto
 {
-    public string DbName { get; set; }
-    public string TableName { get; set; }
-    public JsonElement Doc { get; set; }
+    public string DbName { get; init; }
+    public string TableName { get; init; }
+    public JsonElement Doc { get; init; }
 }

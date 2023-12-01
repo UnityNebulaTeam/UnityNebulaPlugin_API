@@ -1,3 +1,4 @@
+using System.Text.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using NebulaPlugin.Api.Dtos.Mongo;
@@ -17,11 +18,27 @@ public static class Helper
         string jsonOutput = "";
         foreach (var doc in items)
         {
+            doc["_id"] = doc["_id"].ToString();
             var bsonDocument = BsonDocument.Parse(doc.ToJson());
             var settings = new JsonWriterSettings { Indent = true };
             jsonOutput += bsonDocument.ToJson(settings);
         }
         return jsonOutput;
+    }
+
+    public static JsonElement ConvertBsonDocumentToJsonElement(BsonDocument doc)
+    {
+        doc["_id"] = doc["_id"].ToString();
+
+        var bsonDocument = BsonDocument.Parse(doc.ToJson());
+        var json = bsonDocument.ToJson();
+
+        // JsonDocument oluşturarak JsonElement'e dönüştürme
+        JsonDocument jsonDocument = JsonDocument.Parse(json);
+        JsonElement jsonElement = jsonDocument.RootElement;
+        // Console.WriteLine(jsonElement);
+
+        return jsonElement;
     }
 
     /// <summary>
@@ -46,7 +63,7 @@ public static class Helper
         {
             if (tableItemDto.Doc != null)
             {
-                bsonArray.Add(tableItemDto.Doc);
+                // bsonArray.Add(tableItemDto.Doc);
             }
         }
 
