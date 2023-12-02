@@ -87,8 +87,8 @@ public class MongoController : BaseController
     [HttpDelete("item")]
     public async Task<ActionResult> DeleteTableItem([FromQuery] DeleteItemDto item)
     {
-        await _service.DeleteItemAsync(item);
-        return Ok(Results.NoContent());
+        var res = await _service.DeleteItemAsync(item);
+        return Ok(res);
 
     }
 
