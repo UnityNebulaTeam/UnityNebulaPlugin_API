@@ -5,13 +5,10 @@ namespace NebulaPlugin.Common.Exceptions.MongoExceptions;
 
 public class MongoNotFoundException : AppException
 {
-    public MongoNotFoundException()
+    public MongoNotFoundException(string objName) : base($"'{objName}' not found")
     {
     }
 
-    public MongoNotFoundException(string? message) : base(message)
-    {
-    }
 
     public MongoNotFoundException(string? message, string? objName) : base(message, objName)
     {

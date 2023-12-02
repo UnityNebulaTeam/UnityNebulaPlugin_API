@@ -1,5 +1,6 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
+using NebulaPlugin.Common.Exceptions.MongoExceptions;
 
 namespace NebulaPlugin.Application.Mongo;
 public class MongoManagement : DatabaseManager
@@ -8,15 +9,12 @@ public class MongoManagement : DatabaseManager
     private MongoClient client;
     public MongoManagement(string _Url)
     {
-        if (!string.IsNullOrEmpty(_Url))
-        {
-            connectionURL = _Url;
-            client = new MongoClient(connectionURL);
-        }
-        else
-        {
-            Console.WriteLine("Connection Url boş olamaz");
-        }
+        if (string.IsNullOrWhiteSpace(_Url))
+            throw new MongoEmptyValueException("connection string cannot be null ", nameof(MongoClient));
+
+        connectionURL = _Url;
+        client = new MongoClient(connectionURL);
+
     }
 
     #region Create
@@ -84,6 +82,7 @@ public class MongoManagement : DatabaseManager
     }
 
     #endregion
+
     #region Delete
 
     /// <summary>
@@ -112,15 +111,11 @@ public class MongoManagement : DatabaseManager
     /// <param name="tableName">Koleksiyonun adı</param>
     public override async Task<bool> DeleteTable(string dbName, string tableName)
     {
-        var database = client.GetDatabase(dbName);
-        var collectionExists = await CheckIfCollectionExists(database, tableName);
-
-        if (!collectionExists)
-            throw new Exception($"'{tableName}' collection not found");
-
+        await CheckIfDatabaseCollectionExists(dbName, tableName);
 
         try
         {
+            var database = client.GetDatabase(dbName);
             await database.DropCollectionAsync(tableName);
             Console.WriteLine($"{tableName} koleksiyonu silindi");
             return true;
@@ -133,7 +128,6 @@ public class MongoManagement : DatabaseManager
         }
     }
 
-
     /// <summary>
     /// Veri silmek için
     /// </summary>
@@ -142,6 +136,8 @@ public class MongoManagement : DatabaseManager
     /// <param name="id">Bsondocument id'si</param>
     public override async Task<bool> DeleteItem(string dbName, string tableName, string id)
     {
+        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
+
         try
         {
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
@@ -196,10 +192,9 @@ public class MongoManagement : DatabaseManager
     /// Veritabanına bağlı tüm koleksiyonları okur
     /// </summary>
     /// <param name="dbName">Koleksiyonlarını görmek istediğiniz veritabanı</param>
-
-    //TODO: Wrong Data Returns: this method must be return db collection name but returns db names. 
     public override async Task<List<string>> ReadTables(string dbName)
     {
+        await CheckIfDatabaseCollectionExists(dbName: dbName);
         try
         {
             var db = client.GetDatabase(dbName);
@@ -221,6 +216,8 @@ public class MongoManagement : DatabaseManager
     /// <param name="tableName">Verilerin bağlı olduğu koleksiyon adı</param>
     public override async Task<List<BsonDocument>> ReadItems(string dbName, string tableName)
     {
+        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
+
         try
         {
             var db = client.GetDatabase(dbName);
@@ -245,6 +242,8 @@ public class MongoManagement : DatabaseManager
     /// <param name="newDbName">Yeni veritabanı adı</param>
     public override async Task<bool> UpdateDatabase(string oldDbName, string newDbName)
     {
+        await CheckIfDatabaseCollectionExists(dbName: oldDbName);
+
         try
         {
             var oldDatabase = client.GetDatabase(oldDbName);
@@ -279,15 +278,12 @@ public class MongoManagement : DatabaseManager
     /// <param name="newTableName">Yeni koleksiyon adı</param>
     public override async Task<bool> UpdateTable(string dbName, string oldTableName, string newTableName)
     {
-        var db = client.GetDatabase(dbName);
-        var collectionExistsOld = await CheckIfCollectionExists(db, oldTableName);
 
-        if (!collectionExistsOld)
-            throw new Exception($"'{oldTableName}' collection not found");
-
+        await CheckIfDatabaseCollectionExists(dbName, oldTableName);
 
         try
         {
+            var db = client.GetDatabase(dbName);
             var table = db.GetCollection<BsonDocument>(oldTableName);
             var documents = table.Find(new BsonDocument()).ToList();
             await client.GetDatabase(dbName).CreateCollectionAsync(newTableName);
@@ -314,6 +310,8 @@ public class MongoManagement : DatabaseManager
     /// <param name="doc">Güncellenecek veri</param>
     public override async Task<bool> UpdateItem(string dbName, string tableName, BsonDocument doc)
     {
+        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
+
         try
         {
             var db = client.GetDatabase(dbName);
@@ -331,11 +329,29 @@ public class MongoManagement : DatabaseManager
     }
     #endregion
 
-
-    private async Task<bool> CheckIfCollectionExists(IMongoDatabase database, string collectionName)
+    private async Task CheckIfDatabaseCollectionExists(string dbName, string collectionName = null)
     {
-        var filter = new BsonDocument("name", collectionName);
-        var collections = await database.ListCollectionsAsync(new ListCollectionsOptions { Filter = filter });
-        return await collections.AnyAsync();
+
+        var databases = await client.ListDatabaseNames().ToListAsync();
+        var databaseExist = databases.Exists(d => d == dbName);
+
+        if (!databaseExist)
+            throw new MongoNotFoundException(dbName);
+
+        var db = client.GetDatabase(dbName);
+
+        if (collectionName is not null)
+        {
+            var filter = new BsonDocument("name", collectionName);
+            var collections = await db.ListCollectionsAsync(new ListCollectionsOptions { Filter = filter });
+
+            var collectionExist = await collections.AnyAsync();
+
+            if (!collectionExist)
+                throw new MongoNotFoundException(collectionName);
+        }
+
+
     }
+
 }
