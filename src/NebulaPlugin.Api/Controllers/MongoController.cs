@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 using NebulaPlugin.Api.Dtos.Mongo;
 using NebulaPlugin.Api.Services.Mongo;
 
@@ -54,7 +53,7 @@ public class MongoController : BaseController
     public async Task<ActionResult> CreateTableAsync([FromBody] CreateTableDto table)
     {
         var res = await _service.CreateTableAsync(table);
-        return Ok(res);
+        return Created("", res);
 
     }
 
@@ -114,6 +113,8 @@ public class MongoController : BaseController
     public async Task<ActionResult> UpdateTableItem([FromBody] UpdateTableItemDto item)
     {
         var res = await _service.UpdateTableItem(item);
+
+        Console.WriteLine(res);
         return Ok(res);
     }
 

@@ -131,10 +131,14 @@ public class MongoService : IMongoService
     public async Task<TableItemResponse> UpdateTableItem(UpdateTableItemDto item)
     {
         BsonDocument bsonDoc = BsonDocument.Parse(item.Doc.ToString());
+
+        if (!bsonDoc.Contains("_id"))
+            throw new MongoEmptyValueException("Item '_id' value cannot be null or whitespace");
+
+
         bsonDoc["_id"] = new ObjectId(bsonDoc["_id"].AsString);
 
-        if (string.IsNullOrWhiteSpace(bsonDoc["_id"].ToString()))
-            throw new MongoEmptyValueException("Item '_id' value cannot be null or whitespace");
+        Console.WriteLine(bsonDoc);
 
         var updated = await _manager.UpdateItem(item.DbName, item.TableName, bsonDoc);
 

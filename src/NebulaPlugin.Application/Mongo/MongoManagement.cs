@@ -45,6 +45,8 @@ public class MongoManagement : DatabaseManager
     /// <param name="tableName"></param>
     public override async Task<bool> CreateTable(string dbName, string tableName)
     {
+        await CheckIfDatabaseCollectionExists(dbName: dbName);
+
         try
         {
             await client.GetDatabase(dbName).CreateCollectionAsync(tableName);
@@ -67,6 +69,8 @@ public class MongoManagement : DatabaseManager
     /// <param name="doc">Veri seti</param>
     public override async Task<bool> CreateItem(string dbName, string tableName, BsonDocument doc)
     {
+        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
+
         try
         {
             doc["_id"] = ObjectId.GenerateNewId();
@@ -326,8 +330,16 @@ public class MongoManagement : DatabaseManager
         {
             var db = client.GetDatabase(dbName);
             var collection = db.GetCollection<BsonDocument>(tableName);
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", doc["_id"]);
-            await db.GetCollection<BsonDocument>(tableName).ReplaceOneAsync(filter, doc);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", doc["_id"]); //! TODO
+            
+            var res = await db.GetCollection<BsonDocument>(tableName).ReplaceOneAsync(filter, doc);
+
+            // Console.WriteLine($"{res.IsAcknowledged} and {res.ModifiedCount}");
+
+            if (!(res.ModifiedCount > 0) || !res.IsAcknowledged)
+                throw new MongoOperationFailedException($" '{dbName}' database opearation failed");
+
+
             Console.WriteLine($"Item güncellendi.");
             return true;
         }
