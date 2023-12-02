@@ -94,6 +94,7 @@ public class MongoManagement : DatabaseManager
     /// <param name="dbName">Silinecek veritabanı adı</param>
     public override async Task<bool> DeleteDatabase(string dbName)
     {
+        await CheckIfDatabaseCollectionExists(dbName: dbName);
         try
         {
             await client.DropDatabaseAsync(dbName);
