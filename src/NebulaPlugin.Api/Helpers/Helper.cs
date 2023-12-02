@@ -33,10 +33,8 @@ public static class Helper
         var bsonDocument = BsonDocument.Parse(doc.ToJson());
         var json = bsonDocument.ToJson();
 
-        // JsonDocument oluşturarak JsonElement'e dönüştürme
         JsonDocument jsonDocument = JsonDocument.Parse(json);
         JsonElement jsonElement = jsonDocument.RootElement;
-        // Console.WriteLine(jsonElement);
 
         return jsonElement;
     }

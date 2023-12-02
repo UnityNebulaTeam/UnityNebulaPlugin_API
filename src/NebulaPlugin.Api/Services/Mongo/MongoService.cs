@@ -1,12 +1,10 @@
 using System.Text.Json;
 using MongoDB.Bson;
-using MongoDB.Driver;
 using NebulaPlugin.Api.Dtos.Mongo;
 using NebulaPlugin.Api.Dtos.Mongo.Responses;
 using NebulaPlugin.Api.Helpers;
 using NebulaPlugin.Application.Mongo;
 using NebulaPlugin.Common.Exceptions.MongoExceptions;
-using ZstdSharp.Unsafe;
 
 
 namespace NebulaPlugin.Api.Services.Mongo;
@@ -24,7 +22,7 @@ public class MongoService : IMongoService
         var deleted = await _manager.DeleteDatabase(database.Name);
 
         if (!deleted)
-            throw new Exception($"database deletion failed:{database.Name}");
+            throw new MongoOperationFailedException(database.Name, "Delete failed");
 
         return new(database.Name);
     }
@@ -32,7 +30,7 @@ public class MongoService : IMongoService
     {
         var deleted = await _manager.DeleteItem(item.DbName, item.Name, item.Id);
         if (!deleted)
-            throw new Exception("Item deletion failed");
+            throw new MongoOperationFailedException(item.Id, "id delete failed");
 
         return new(item.Id);
 
@@ -41,7 +39,7 @@ public class MongoService : IMongoService
     {
         var deleted = await _manager.DeleteTable(table.DbName, table.Name);
         if (!deleted)
-            throw new Exception($"Delete table '{table.Name}' in database '{table.DbName}' failed.");
+            throw new MongoOperationFailedException(table.Name, "table delete failed");
 
         return new(table.Name);
     }
@@ -95,7 +93,7 @@ public class MongoService : IMongoService
         var created = await _manager.CreateTable(table.DbName, table.Name);
 
         if (!created)
-            throw new Exception($"Creating table '{table.Name}' in database '{table.DbName}' failed.");
+            throw new MongoOperationFailedException(table.Name, "table create failed");
 
         return new(table.Name);
     }
@@ -105,7 +103,7 @@ public class MongoService : IMongoService
         var created = await _manager.CreateItem(item.DbName, item.TableName, bsonDoc);
 
         if (!created)
-            throw new Exception("Item creation failed.");
+            throw new MongoOperationFailedException(item.TableName, "table item create failed");
     }
 
     #endregion
@@ -116,7 +114,8 @@ public class MongoService : IMongoService
         var updated = await _manager.UpdateDatabase(database.Name, database.NewDbName);
 
         if (!updated)
-            throw new Exception($"'{database.Name}' database update failed");
+            throw new MongoOperationFailedException(database.Name, " update failed");
+
 
         return new(database.NewDbName);
     }
@@ -125,7 +124,7 @@ public class MongoService : IMongoService
         var updated = await _manager.UpdateTable(table.DbName, table.Name, table.NewTableName);
 
         if (!updated)
-            throw new Exception($"Update table '{table.Name}' in database '{table.DbName}' failed.");
+            throw new MongoOperationFailedException(table.NewTableName, "table update failed");
 
         return new(table.NewTableName);
     }
@@ -134,10 +133,13 @@ public class MongoService : IMongoService
         BsonDocument bsonDoc = BsonDocument.Parse(item.Doc.ToString());
         bsonDoc["_id"] = new ObjectId(bsonDoc["_id"].AsString);
 
+        if (string.IsNullOrWhiteSpace(bsonDoc["_id"].ToString()))
+            throw new MongoEmptyValueException("Item '_id' value cannot be null or whitespace");
+
         var updated = await _manager.UpdateItem(item.DbName, item.TableName, bsonDoc);
 
         if (!updated)
-            throw new Exception("Item creation failed.");
+            throw new MongoOperationFailedException(item.TableName, "table item update failed");
 
         return new(bsonDoc["_id"].ToString());
 

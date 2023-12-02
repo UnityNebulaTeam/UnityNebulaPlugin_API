@@ -1,5 +1,4 @@
 using System.Net;
-using System.Runtime.Serialization;
 using src.NebulaPlugin.Common.Exceptions;
 
 namespace NebulaPlugin.Common.Exceptions.MongoExceptions;

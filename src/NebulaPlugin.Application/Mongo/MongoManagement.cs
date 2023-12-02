@@ -34,7 +34,8 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($" Veritabanı oluşturulamadı. Hata kodu {ex.Message}");
-            return false;
+            throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
+
         }
     }
     /// <summary>
@@ -52,7 +53,8 @@ public class MongoManagement : DatabaseManager
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
+            throw new MongoOperationFailedException($" '{tableName}' table opearation failed: {ex.Message}");
+
         }
 
     }
@@ -77,7 +79,8 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"Veri oluşturulamadı. Hata Mesajı : {ex.Message}");
-            throw new Exception(ex.Message);
+            throw new MongoOperationFailedException($" '{tableName}' 'item' opearation failed: {ex.Message}");
+
         }
     }
 
@@ -100,7 +103,7 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"{dbName} veritabanı silinemedi. {ex.Message}");
-            return true;
+            throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
         }
     }
 
@@ -123,7 +126,7 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"{tableName} koleksiyonu silinemedi. Hata kodu: {ex.Message}");
-            throw new Exception(ex.Message);
+            throw new MongoOperationFailedException($" '{tableName}' table opearation failed: {ex.Message}");
 
         }
     }
@@ -153,7 +156,8 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"{id} numaralı döküman silinemedi. Hata kodu {ex.Message}");
-            return false;
+            throw new MongoOperationFailedException($" '{tableName}' 'item' opearation failed: {ex.Message}");
+
         }
     }
 
@@ -184,7 +188,8 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"Veritabanları okunamadı. Hata kodu {ex.Message}");
-            return null;
+            throw new MongoOperationFailedException($"database opearation failed: {ex.Message}");
+
         }
     }
 
@@ -205,6 +210,8 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"Koleksiyonlar okunamadı {ex.Message}");
+            throw new MongoOperationFailedException($"database opearation failed: {ex.Message}");
+
             return null;
         }
     }
@@ -228,7 +235,7 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"Itemler okunamadı {ex.Message}");
-            return null;
+            throw new MongoOperationFailedException($"database opearation failed: {ex.Message}");
         }
     }
     #endregion
@@ -267,7 +274,7 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"Veritabanı güncellenemedi {ex.Message} {ex.InnerException}");
-            return false;
+            throw new MongoOperationFailedException($" '{oldDbName}' database opearation failed: {ex.Message}");
         }
     }
     /// <summary>
@@ -296,8 +303,10 @@ public class MongoManagement : DatabaseManager
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
             Console.WriteLine($"Table Guncellenmedi {ex.Message}");
+            throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
+
+
 
         }
     }
@@ -324,7 +333,8 @@ public class MongoManagement : DatabaseManager
         catch (Exception ex)
         {
             Console.WriteLine($"Veri güncellenemedi. Hata kodu {ex.Message}");
-            return false;
+            throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
+
         }
     }
     #endregion
