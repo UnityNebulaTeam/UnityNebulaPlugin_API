@@ -8,6 +8,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddServices();
 builder.Services.ConfigureSqlConnection(builder.Configuration);
+builder.Services.ConfigureIdentity();
+builder.Services.ConfigureJWT(builder.Configuration);
 
 var app = builder.Build();
 
