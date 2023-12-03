@@ -8,19 +8,20 @@ using Microsoft.IdentityModel.Tokens;
 using NebulaPlugin.Api.Dtos.User;
 
 
-namespace NebulaPlugin.Api.Services.User;
+namespace NebulaPlugin.Api.Services.Auth;
 
 public class AuthService : IAuthService
 {
     private readonly UserManager<Models.User> _userManager;
     private readonly IConfiguration _configuration;
+
     public AuthService(UserManager<Models.User> userManager, IConfiguration configuration)
     {
         _userManager = userManager;
         _configuration = configuration;
     }
-   
-   
+
+
     public async Task<IdentityResult> CreateUserAsync(CreateUserDto userDto)
     {
         var dbUser = await _userManager.FindByEmailAsync(userDto.Email);
@@ -141,6 +142,7 @@ public class AuthService : IAuthService
         var userDatabasesJsonObj = JsonSerializer.Serialize(user.Databases);
         List<Claim> claims = new()
         {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim("dbs" , userDatabasesJsonObj),
         };
@@ -178,7 +180,7 @@ public class AuthService : IAuthService
 
         return Convert.ToBase64String(random);
     }
-    
+
     #endregion
 
 }

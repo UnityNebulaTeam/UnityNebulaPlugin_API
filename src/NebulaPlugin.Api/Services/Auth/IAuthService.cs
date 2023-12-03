@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using NebulaPlugin.Api.Dtos.User;
 
-namespace NebulaPlugin.Api.Services.User;
+namespace NebulaPlugin.Api.Services.Auth;
 
 public interface IAuthService
 {

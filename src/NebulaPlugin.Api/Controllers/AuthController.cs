@@ -1,17 +1,20 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using NebulaPlugin.Api.Dtos.User;
-using NebulaPlugin.Api.Services.User;
+using NebulaPlugin.Api.Services.Auth;
 
 namespace NebulaPlugin.Api.Controllers;
 
 
 public class AuthController : BaseController
 {
+
     private readonly IAuthService _authService;
 
     public AuthController(IAuthService authService)
     {
         _authService = authService;
+
     }
 
     [HttpPost("register")]
