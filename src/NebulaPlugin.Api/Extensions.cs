@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using NebulaPlugin.Api.EFCore;
+using NebulaPlugin.Api.Models;
 using NebulaPlugin.Api.Services.Mongo;
 using NebulaPlugin.Common.Exceptions.MongoExceptions;
 using src.NebulaPlugin.Common;
@@ -53,5 +57,16 @@ public static class Extensions
                 }
             });
         });
+    }
+
+
+    public static void ConfigureSqlConnection(this IServiceCollection services, IConfiguration configuration)
+    {
+        var sqlServerSettings = configuration.GetSection("SqlServerSettings");
+        services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(sqlServerSettings["ConnectionString"]));
+
+        // services.AddIdentity<User, IdentityRole>()
+        //  .AddEntityFrameworkStores<AppDbContext>()
+        //  .AddDefaultTokenProviders();
     }
 }

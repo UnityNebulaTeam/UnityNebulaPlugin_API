@@ -7,6 +7,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 builder.Services.AddServices();
+builder.Services.ConfigureSqlConnection(builder.Configuration);
 
 var app = builder.Build();
 
