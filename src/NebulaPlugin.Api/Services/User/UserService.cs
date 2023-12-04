@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using NebulaPlugin.Api.Dtos.User;
 using NebulaPlugin.Api.Dtos.User.Response;

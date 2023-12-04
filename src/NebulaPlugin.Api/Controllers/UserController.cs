@@ -1,10 +1,12 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NebulaPlugin.Api.Dtos.User;
 using NebulaPlugin.Api.Services.User;
 
 namespace NebulaPlugin.Api.Controllers;
 
+[Authorize]
 public class UserController : BaseController
 {
     private string UserId => new(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);

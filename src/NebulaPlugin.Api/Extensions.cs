@@ -89,6 +89,7 @@ public static class Extensions
         {
             opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(opt =>
         {
             opt.TokenValidationParameters = new TokenValidationParameters
@@ -103,10 +104,7 @@ public static class Extensions
             };
         });
 
-        // services.AddAuthorization(opt =>
-        // {
-        //     opt.AddPolicy("RequireDb", policy => policy.AddRequirements());
-        // });
+        services.AddAuthorization();
     }
 
 }

@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NebulaPlugin.Api.Attributes;
 using NebulaPlugin.Api.Dtos.Mongo;
 using NebulaPlugin.Api.Services.Mongo;
 
 namespace NebulaPlugin.Api.Controllers;
 
-[Authorize]
+[AuthorizeDbType("MONGO")]
 public class MongoController : BaseController
 {
     private readonly IMongoService _service;
