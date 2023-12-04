@@ -21,6 +21,7 @@ public class UserService : IUserService
         Database db = new()
         {
             Name = database.Name,
+            KeyIdentifier = database.KeyIdentifier,
             ConnectionString = database.ConnectionString,
             UserId = userId
         };

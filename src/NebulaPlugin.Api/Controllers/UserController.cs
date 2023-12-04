@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using NebulaPlugin.Api.Dtos.Mongo;
 using NebulaPlugin.Api.Dtos.User;
 using NebulaPlugin.Api.Services.User;
 

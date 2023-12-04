@@ -4,8 +4,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NebulaPlugin.Api.Dtos.User;
+using NebulaPlugin.Api.EFCore;
 
 
 namespace NebulaPlugin.Api.Services.Auth;
@@ -13,12 +15,14 @@ namespace NebulaPlugin.Api.Services.Auth;
 public class AuthService : IAuthService
 {
     private readonly UserManager<Models.User> _userManager;
+    private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
 
-    public AuthService(UserManager<Models.User> userManager, IConfiguration configuration)
+    public AuthService(UserManager<Models.User> userManager, IConfiguration configuration, AppDbContext context)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _context = context;
     }
 
 
@@ -48,8 +52,13 @@ public class AuthService : IAuthService
     {
         Models.User? dbUser = string.IsNullOrEmpty(authUserDto.Email) ? await _userManager.FindByNameAsync(authUserDto.UserName) : await _userManager.FindByEmailAsync(authUserDto.Email);
 
+
         if (dbUser is null)
             throw new Exception("user not found by this email or username");
+
+        var userWithTodos = await _context.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Id == dbUser.Id);
+
+
 
         bool result = await _userManager.CheckPasswordAsync(dbUser, authUserDto.Password);
 
@@ -57,7 +66,7 @@ public class AuthService : IAuthService
             throw new Exception("Email/Username and Password is not correct");
 
         //CREATE TOKEN
-        var token = await CreateToken(dbUser);
+        var token = await CreateToken(userWithTodos);
 
 
         return token;
@@ -138,8 +147,7 @@ public class AuthService : IAuthService
 
     private async Task<List<Claim>> GetUserClaims(Models.User user)
     {
-
-        var userDatabasesJsonObj = JsonSerializer.Serialize(user.Databases);
+        var userDatabasesJsonObj = JsonSerializer.Serialize(user.Databases.Select(db => db.KeyIdentifier));
         List<Claim> claims = new()
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
