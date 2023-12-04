@@ -14,17 +14,11 @@ public record AddUserDatabaseDto
         ConnectionString = connectionString;
         Name = name;
 
-        foreach (var key in Enum.GetValues(typeof(DbTypes)))
-        {
-            Console.WriteLine($"----------------------------------------------------------______>{key} - {keyIdentifier}");
-            if (string.Equals(key.ToString(), keyIdentifier))
-                KeyIdentifier = keyIdentifier;
+        if (!Enum.TryParse<DbTypes>(keyIdentifier, false, out var type))
+            throw new ArgumentException("Invalid DbType provided: " + keyIdentifier);
 
 
-        }
-
-        // if (KeyIdentifier is null)
-        //     throw new ArgumentException("Invalid DbType provided: " + keyIdentifier);
+        KeyIdentifier = type.ToString();
 
 
 
