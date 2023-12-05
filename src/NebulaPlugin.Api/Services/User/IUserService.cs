@@ -10,4 +10,5 @@ public interface IUserService
     // Task<string> GetConnectionStringByDatabaseIdAsync(Guid id);
     // string GetConnectionStringByDatabaseId(Guid id);
     Task<List<UserDatabaseResponse>> GetUsersDatabases(string userId);
+    Task<UserResult> GetUserDataAsync(string userId);
 }

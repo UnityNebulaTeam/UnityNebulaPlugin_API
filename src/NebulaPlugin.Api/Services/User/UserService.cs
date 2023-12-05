@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NebulaPlugin.Api.Dtos.User;
 using NebulaPlugin.Api.Dtos.User.Response;
@@ -10,10 +11,12 @@ namespace NebulaPlugin.Api.Services.User;
 public class UserService : IUserService
 {
     private readonly AppDbContext _context;
+    private readonly UserManager<Models.User> _userManager;
 
-    public UserService(AppDbContext context)
+    public UserService(AppDbContext context, UserManager<Models.User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<UserDatabaseResponse> AddDatabaseAsync(AddUserDatabaseDto database, string userId)
@@ -38,5 +41,30 @@ public class UserService : IUserService
 
         return res;
 
+    }
+
+    public async Task<UserResult> GetUserDataAsync(string userId)
+    {
+        Models.User? dbUser = await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Id == userId);
+
+        var userDatabases = dbUser.Databases.ToList();
+
+        List<UserDatabaseResponse> userDbs = new();
+
+        userDatabases.ForEach(ud => userDbs.Add(new UserDatabaseResponse(ud.KeyIdentifier, ud.ConnectionString)));
+
+        if (dbUser is null)
+            throw new Exception("User not found");
+
+
+        UserResult userResult = new()
+        {
+            UserName = dbUser.UserName,
+            Email = dbUser.Email,
+            EmailConfirmed = dbUser.EmailConfirmed,
+            Dbs = userDbs
+        };
+
+        return userResult;
     }
 }

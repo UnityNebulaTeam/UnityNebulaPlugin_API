@@ -17,7 +17,6 @@ public class UserController : BaseController
         _userService = userService;
     }
 
-
     [HttpGet("db")]
     public async Task<IActionResult> GetDbs()
     {
@@ -29,6 +28,20 @@ public class UserController : BaseController
     public async Task<IActionResult> CreateDb(AddUserDatabaseDto databaseDto)
     {
         var res = await _userService.AddDatabaseAsync(databaseDto, UserId);
+
+        return Ok(res);
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetUserData()
+    {
+        var res = await _userService.GetUserDataAsync(UserId);
+        // return Ok(new
+        // {
+        //     Username = "test_3131",
+        //     Email = "test@mail.com",
+        //     Dbs = new List<string>() { "MONGO", "SQLITE" }
+        // });
 
         return Ok(res);
     }
