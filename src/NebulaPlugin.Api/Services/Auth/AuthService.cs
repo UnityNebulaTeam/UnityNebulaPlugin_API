@@ -109,11 +109,10 @@ public class AuthService : IAuthService
 
         ClaimsPrincipal? principal = _tokenHandler.ValidateToken(token: token, validationParameters: tokenValidationParams, out SecurityToken securityToken);
 
-        JwtSecurityToken jwtSecurityToken = new();
 
-        bool correctAlgorithm = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
 
-        if (securityToken is not JwtSecurityToken || !correctAlgorithm)
+
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             throw new SecurityTokenException("Invalid token.");
 
         return principal;
