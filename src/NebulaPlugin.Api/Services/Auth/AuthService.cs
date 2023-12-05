@@ -42,21 +42,10 @@ public class AuthService : IAuthService
 
         var result = await _userManager.CreateAsync(user, userDto.Password);
 
-
-        var errors = result.Errors;
-
-
         if (!result.Succeeded)
-        {
-            List<string> errorsList = new();
+            throw new AggregateException(result.Errors.Select(e => e.Description)
+                                                      .Select(e => new Exception(e)));
 
-            foreach (var e in errors)
-            {
-                e.Description.ToString();
-            }
-            throw new Exception("User Register Error from Auth Service" + errorsList);
-
-        }
 
         return result;
     }
