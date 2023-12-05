@@ -44,20 +44,24 @@ public static class Extensions
                         case MongoNotFoundException notFoundException:
                             context.Response.StatusCode = (int)notFoundException.StatusCode;
                             errorResponse.Message = notFoundException.Message;
+                            errorResponse.Success = false;
                             break;
 
                         case MongoAlreadyExistException alreadyExistException:
                             context.Response.StatusCode = (int)alreadyExistException.StatusCode;
                             errorResponse.Message = alreadyExistException.Message;
+                            errorResponse.Success = false;
                             break;
 
                         case MongoOperationFailedException operationFailedException:
                             context.Response.StatusCode = (int)operationFailedException.StatusCode;
                             errorResponse.Message = operationFailedException.Message;
+                            errorResponse.Success = false;
                             break;
 
                         default:
                             errorResponse.Message = contextFeature.Error.Message;
+                            errorResponse.Success = false;
                             break;
                     }
 
