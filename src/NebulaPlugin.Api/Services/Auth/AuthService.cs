@@ -25,7 +25,6 @@ public class AuthService : IAuthService
         _context = context;
     }
 
-
     public async Task<IdentityResult> CreateUserAsync(CreateUserDto userDto)
     {
         var dbUser = await _userManager.FindByEmailAsync(userDto.Email);
@@ -39,19 +38,19 @@ public class AuthService : IAuthService
             UserName = userDto.UserName,
         };
 
-
         var result = await _userManager.CreateAsync(user, userDto.Password);
 
         if (!result.Succeeded)
             throw new AggregateException(result.Errors.Select(e => e.Description)
                                                       .Select(e => new Exception(e)));
 
-
         return result;
     }
     public async Task<TokenDto> ValidateUserAsync(AuthenticateUserDto authUserDto)
     {
-        Models.User? dbUser = string.IsNullOrEmpty(authUserDto.Email) ? await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.UserName == authUserDto.UserName) : await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Email == authUserDto.Email);
+        Models.User? dbUser = string.IsNullOrEmpty(authUserDto.Email)
+                            ? await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.UserName == authUserDto.UserName)
+                            : await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Email == authUserDto.Email);
 
         if (dbUser is null)
             throw new Exception("user not found by this email or username");
@@ -64,36 +63,6 @@ public class AuthService : IAuthService
         var token = await CreateToken(dbUser);
 
         return token;
-
-
-    }
-    public ClaimsPrincipal VerifyToken(string token)
-    {
-        JwtSecurityTokenHandler _tokenHandler = new();
-
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-
-        var tokenValidationParams = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["issuer"],
-            ValidAudience = jwtSettings["audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["secret"])),
-            RequireExpirationTime = true
-        };
-
-        //Validate token
-        ClaimsPrincipal? principal = _tokenHandler.ValidateToken(token: token, validationParameters: tokenValidationParams, out SecurityToken securityToken);
-
-        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            throw new SecurityTokenException("invalid token.");
-
-        return principal;
-
-
 
 
     }
@@ -119,6 +88,37 @@ public class AuthService : IAuthService
 
 
     #region Helpers
+
+    private ClaimsPrincipal VerifyToken(string token)
+    {
+        JwtSecurityTokenHandler _tokenHandler = new();
+
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+
+        var tokenValidationParams = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["issuer"],
+            ValidAudience = jwtSettings["audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["secret"])),
+            RequireExpirationTime = true
+        };
+
+        ClaimsPrincipal? principal = _tokenHandler.ValidateToken(token: token, validationParameters: tokenValidationParams, out SecurityToken securityToken);
+
+        JwtSecurityToken jwtSecurityToken = new();
+
+        bool correctAlgorithm = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+
+        if (securityToken is not JwtSecurityToken || !correctAlgorithm)
+            throw new SecurityTokenException("Invalid token.");
+
+        return principal;
+
+    }
 
     private async Task<TokenDto> CreateToken(Models.User user)
     {
