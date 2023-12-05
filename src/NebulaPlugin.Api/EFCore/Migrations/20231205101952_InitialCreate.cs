@@ -163,7 +163,6 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     ConnectionString = table.Column<string>(type: "TEXT", nullable: false),
                     KeyIdentifier = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: false)

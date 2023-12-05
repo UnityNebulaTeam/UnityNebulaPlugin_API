@@ -20,7 +20,6 @@ public class UserService : IUserService
     {
         Database db = new()
         {
-            Name = database.Name,
             KeyIdentifier = database.KeyIdentifier,
             ConnectionString = database.ConnectionString,
             UserId = userId
@@ -28,14 +27,14 @@ public class UserService : IUserService
         _context.Databases.Add(db);
         await _context.SaveChangesAsync();
 
-        return new(db.Name, db.ConnectionString);
+        return new(db.KeyIdentifier, db.ConnectionString);
     }
 
     public async Task<List<UserDatabaseResponse>> GetUsersDatabases(string userId)
     {
         var userDbs = await _context.Databases.Where(db => db.UserId == userId).ToListAsync();
         List<UserDatabaseResponse> res = new();
-        userDbs.ForEach(db => res.Add(new UserDatabaseResponse(db.Name, db.ConnectionString)));
+        userDbs.ForEach(db => res.Add(new UserDatabaseResponse(db.KeyIdentifier, db.ConnectionString)));
 
         return res;
 

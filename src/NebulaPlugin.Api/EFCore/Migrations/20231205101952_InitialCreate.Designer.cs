@@ -11,7 +11,7 @@ using NebulaPlugin.Api.EFCore;
 namespace NebulaPlugin.Api.EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231204182810_InitialCreate")]
+    [Migration("20231205101952_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -159,10 +159,6 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("KeyIdentifier")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

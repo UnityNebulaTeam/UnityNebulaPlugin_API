@@ -1,3 +1,3 @@
 namespace NebulaPlugin.Api.Dtos.User.Response;
 
-public record UserDatabaseResponse(string Name, string ConnectionString);
+public record UserDatabaseResponse(string KeyIdentifier, string ConnectionString);
