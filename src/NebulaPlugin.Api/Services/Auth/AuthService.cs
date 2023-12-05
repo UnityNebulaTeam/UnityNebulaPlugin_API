@@ -50,24 +50,17 @@ public class AuthService : IAuthService
     }
     public async Task<TokenDto> ValidateUserAsync(AuthenticateUserDto authUserDto)
     {
-        Models.User? dbUser = string.IsNullOrEmpty(authUserDto.Email) ? await _userManager.FindByNameAsync(authUserDto.UserName) : await _userManager.FindByEmailAsync(authUserDto.Email);
-
+        Models.User? dbUser = string.IsNullOrEmpty(authUserDto.Email) ? await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.UserName == authUserDto.UserName) : await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Email == authUserDto.Email);
 
         if (dbUser is null)
             throw new Exception("user not found by this email or username");
-
-        var userWithTodos = await _context.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Id == dbUser.Id);
-
-
 
         bool result = await _userManager.CheckPasswordAsync(dbUser, authUserDto.Password);
 
         if (!result)
             throw new Exception("Email/Username and Password is not correct");
 
-        //CREATE TOKEN
-        var token = await CreateToken(userWithTodos);
-
+        var token = await CreateToken(dbUser);
 
         return token;
 
@@ -111,16 +104,14 @@ public class AuthService : IAuthService
 
         Claim? emailClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
 
-        Models.User? user = await _userManager.FindByEmailAsync(emailClaim.Value);
+        var userWithDatabases = await _context.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Email == emailClaim.Value);
 
-        //validate refresh token
-        bool correctRefreshToken = string.Equals(user.RefreshToken, tokenDto.RefreshToken);
+        bool correctRefreshToken = string.Equals(userWithDatabases.RefreshToken, tokenDto.RefreshToken);
 
         if (!correctRefreshToken)
             throw new Exception("Wrong refresh token please enter valid refresh token");
 
-
-        var newToken = await CreateToken(user);
+        var newToken = await CreateToken(userWithDatabases);
 
         return newToken;
     }
