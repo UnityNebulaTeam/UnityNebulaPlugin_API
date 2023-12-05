@@ -43,8 +43,20 @@ public class AuthService : IAuthService
         var result = await _userManager.CreateAsync(user, userDto.Password);
 
 
+        var errors = result.Errors;
+
+
         if (!result.Succeeded)
-            throw new Exception("User Register Error from Auth Service");
+        {
+            List<string> errorsList = new();
+
+            foreach (var e in errors)
+            {
+                e.Description.ToString();
+            }
+            throw new Exception("User Register Error from Auth Service" + errorsList);
+
+        }
 
         return result;
     }
