@@ -1,23 +1,18 @@
-using System.ComponentModel.DataAnnotations;
 
 namespace NebulaPlugin.Api.Dtos.User;
 
 public record CreateUserDto
 {
-
-    [Required(ErrorMessage = "Password is required.")]
     public string Password { get; init; } = null!;
-
-    [Required(ErrorMessage = "Email is required.")]
     public string Email { get; init; } = null!;
+    public string UserName { get => CreateUserNameIfUserNameNull(); init => _userName = value; }
     private string? _userName;
 
-    public string UserName
+    public CreateUserDto(string email, string password)
     {
-        get => CreateUserNameIfUserNameNull();
-        init => _userName = value;
+        Email = email;
+        Password = password;
     }
-
 
     private string CreateUserNameIfUserNameNull()
     {
@@ -30,10 +25,5 @@ public record CreateUserDto
         return _userName ?? string.Empty;
     }
 
-    public CreateUserDto(string email, string password)
-    {
-        Email = email;
-        Password = password;
-    }
 
 }
