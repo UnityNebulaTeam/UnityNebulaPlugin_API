@@ -171,7 +171,7 @@ public class AuthService : IAuthService
             issuer: jwtSettings["issuer"],
             audience: jwtSettings["audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["expires"])),
+            expires: DateTime.Now.AddMinutes(Convert.ToInt32(jwtSettings["expires"])),
             signingCredentials: credentials
         );
     }
