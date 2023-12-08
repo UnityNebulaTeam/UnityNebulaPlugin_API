@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using NebulaPlugin.Api.Attributes;
 using NebulaPlugin.Api.Dtos.Mongo;
-using NebulaPlugin.Api.Services.Mongo;
+using NebulaPlugin.Api.Services;
 
 namespace NebulaPlugin.Api.Controllers;
 
 [AuthorizeDbType("MONGO")]
 public class MongoController : BaseController
 {
-    private readonly IMongoService _service;
+    // private readonly IMongoService _service;
 
-    public MongoController(IMongoService service) => _service = service;
+    private readonly IServiceManager _manager;
+
+    public MongoController(IServiceManager manager) => _manager = manager;
 
     #region DB Enpoints
 
@@ -18,14 +20,14 @@ public class MongoController : BaseController
     [HttpPost("db")]
     public async Task<ActionResult> CreateDatabase([FromBody] CreateDatabaseDto database)
     {
-        var res = await _service.CreateDatabaseAsync(database);
+        var res = await _manager.Mongo.CreateDatabaseAsync(database);
         return Ok(res);
     }
 
     [HttpGet("db")]
     public async Task<ActionResult<List<ReadDatabaseDto>>> GetDatabases()
     {
-        var result = await _service.GetAllDatabasesAsync();
+        var result = await _manager.Mongo.GetAllDatabasesAsync();
 
         return OkOrNotFound(result);
     }
@@ -34,7 +36,7 @@ public class MongoController : BaseController
     public async Task<ActionResult> DeleteDatabase([FromQuery] DeleteDatabaseDto database)
     {
 
-        var res = await _service.DeleteDatabaseAsync(database);
+        var res = await _manager.Mongo.DeleteDatabaseAsync(database);
         return Ok(res);
 
     }
@@ -42,7 +44,7 @@ public class MongoController : BaseController
     [HttpPut("db")]
     public async Task<ActionResult> UpdateDatabase([FromBody] UpdateDatabaseDto database)
     {
-        var res = await _service.UpdateDatabase(database);
+        var res = await _manager.Mongo.UpdateDatabase(database);
         return Ok(res);
 
     }
@@ -54,7 +56,7 @@ public class MongoController : BaseController
     [HttpPost("table")]
     public async Task<ActionResult> CreateTableAsync([FromBody] CreateTableDto table)
     {
-        var res = await _service.CreateTableAsync(table);
+        var res = await _manager.Mongo.CreateTableAsync(table);
         return Created("", res);
 
     }
@@ -62,14 +64,14 @@ public class MongoController : BaseController
     [HttpGet("table")]
     public async Task<ActionResult<List<TableDto>>> GetTables([FromQuery] ReadTableDto table)
     {
-        var result = await _service.GetAllTablesAsync(table);
+        var result = await _manager.Mongo.GetAllTablesAsync(table);
         return OkOrNotFound(result);
     }
 
     [HttpDelete("table")]
     public async Task<ActionResult> DeleteTable([FromQuery] DeleteTableDto table)
     {
-        var res = await _service.DeleteTableAsync(table);
+        var res = await _manager.Mongo.DeleteTableAsync(table);
         return Ok(res);
 
     }
@@ -77,7 +79,7 @@ public class MongoController : BaseController
     [HttpPut("table")]
     public async Task<ActionResult> UpdateTable([FromBody] UpdateTableDto table)
     {
-        var res = await _service.UpdateTable(table);
+        var res = await _manager.Mongo.UpdateTable(table);
         return Ok(res);
     }
 
@@ -88,7 +90,7 @@ public class MongoController : BaseController
     [HttpDelete("item")]
     public async Task<ActionResult> DeleteTableItem([FromQuery] DeleteItemDto item)
     {
-        var res = await _service.DeleteItemAsync(item);
+        var res = await _manager.Mongo.DeleteItemAsync(item);
         return Ok(res);
 
     }
@@ -96,7 +98,7 @@ public class MongoController : BaseController
     [HttpPost("item")]
     public async Task<ActionResult> CreateTableItemAsync([FromBody] CreateTableItemDto item)
     {
-        await _service.CreateItemAsync(item);
+        await _manager.Mongo.CreateItemAsync(item);
         return Created();
 
     }
@@ -105,7 +107,7 @@ public class MongoController : BaseController
     [HttpGet("item")]
     public async Task<ActionResult<List<TableItemDto>>> GetTableItems([FromQuery] ReadTableItemsDto item)
     {
-        var result = await _service.GetAllTableItemsAsync(item);
+        var result = await _manager.Mongo.GetAllTableItemsAsync(item);
         // var jsonObj = Helpers.Helper.ConvertBsonDocumentToJson(result);
         return Ok(result);
 
@@ -114,7 +116,7 @@ public class MongoController : BaseController
     [HttpPut("item")]
     public async Task<ActionResult> UpdateTableItem([FromBody] UpdateTableItemDto item)
     {
-        var res = await _service.UpdateTableItem(item);
+        var res = await _manager.Mongo.UpdateTableItem(item);
 
         Console.WriteLine(res);
         return Ok(res);

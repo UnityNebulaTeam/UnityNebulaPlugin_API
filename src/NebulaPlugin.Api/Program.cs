@@ -7,6 +7,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 // builder.Services.AddHttpContextAccessor();
 
+// builder.Services.AddDbManagers();
 builder.Services.AddServices();
 builder.Services.ConfigureSqlConnection(builder.Configuration);
 builder.Services.ConfigureIdentity();

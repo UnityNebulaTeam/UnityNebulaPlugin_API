@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NebulaPlugin.Api.EFCore;
 using NebulaPlugin.Api.Models;
-using NebulaPlugin.Api.Services.Mongo;
 using NebulaPlugin.Common.Exceptions.MongoExceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using src.NebulaPlugin.Common;
@@ -11,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using NebulaPlugin.Api.Services.Auth;
 using NebulaPlugin.Api.Services.User;
+using NebulaPlugin.Api.Services;
 
 namespace NebulaPlugin.Api;
 
@@ -18,7 +18,8 @@ public static class Extensions
 {
     public static void AddServices(this IServiceCollection services)
     {
-        services.AddScoped<IMongoService, MongoService>();
+        // services.AddScoped<IMongoService, MongoService>();
+        services.AddScoped<IServiceManager, ServiceManager>();
         services.AddScoped<UserManager<User>, UserManager<User>>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
