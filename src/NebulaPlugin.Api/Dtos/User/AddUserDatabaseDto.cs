@@ -18,8 +18,5 @@ public record AddUserDatabaseDto
 
         KeyIdentifier = type.ToString();
 
-
-
-
     }
 }

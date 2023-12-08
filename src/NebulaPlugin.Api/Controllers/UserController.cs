@@ -27,21 +27,23 @@ public class UserController : BaseController
     [HttpPost("db")]
     public async Task<IActionResult> CreateDb(AddUserDatabaseDto databaseDto)
     {
-        var res = await _userService.AddDatabaseAsync(databaseDto, UserId);
+        await _userService.AddDatabaseAsync(databaseDto, UserId);
 
-        return Ok(res);
+        return StatusCode(201);
+    }
+
+    [HttpPut("db/{type}")]
+    public async Task<IActionResult> UpdateDb(UpdateUserDatabaseDto databaseDto, [FromRoute] string type)
+    {
+        await _userService.UpdateDatabaseAsync(databaseDto, UserId, type);
+
+        return StatusCode(204);
     }
 
     [HttpGet("me")]
     public async Task<IActionResult> GetUserData()
     {
         var res = await _userService.GetUserDataAsync(UserId);
-        // return Ok(new
-        // {
-        //     Username = "test_3131",
-        //     Email = "test@mail.com",
-        //     Dbs = new List<string>() { "MONGO", "SQLITE" }
-        // });
 
         return Ok(res);
     }

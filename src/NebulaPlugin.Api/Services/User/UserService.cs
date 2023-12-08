@@ -19,7 +19,7 @@ public class UserService : IUserService
         _userManager = userManager;
     }
 
-    public async Task<UserDatabaseResponse> AddDatabaseAsync(AddUserDatabaseDto database, string userId)
+    public async Task AddDatabaseAsync(AddUserDatabaseDto database, string userId)
     {
         bool userDbExist = await _context.Databases.AnyAsync(db => db.KeyIdentifier == database.KeyIdentifier);
 
@@ -36,7 +36,26 @@ public class UserService : IUserService
         _context.Databases.Add(db);
         await _context.SaveChangesAsync();
 
-        return new(db.KeyIdentifier, db.ConnectionString);
+    }
+
+    public async Task UpdateDatabaseAsync(UpdateUserDatabaseDto database, string userId, string type)
+    {
+        Database? db = await _context.Databases.Where(db => db.UserId == userId).FirstOrDefaultAsync(db => db.KeyIdentifier == type.ToUpper()); 
+
+        if (db is null)
+            throw new Exception($"{type} database record not found for this user. ");
+
+        db.ConnectionString = database.ConnectionString;
+
+        _context.Databases.Update(db);
+
+
+
+        var res = await _context.SaveChangesAsync();
+
+        if (res < 0)
+            throw new Exception($"Failed to update db '{db.KeyIdentifier}'.");
+
     }
 
     public async Task<List<UserDatabaseResponse>> GetUsersDatabases(string userId)
@@ -73,4 +92,5 @@ public class UserService : IUserService
 
         return userResult;
     }
+
 }
