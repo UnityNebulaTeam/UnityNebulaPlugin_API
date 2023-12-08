@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NebulaPlugin.Api.EFCore;
 using NebulaPlugin.Api.Models;
-using NebulaPlugin.Api.Services.Mongo;
 using NebulaPlugin.Common.Exceptions.MongoExceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using src.NebulaPlugin.Common;
@@ -12,6 +11,7 @@ using System.Text;
 using NebulaPlugin.Api.Services.Auth;
 using NebulaPlugin.Api.Services.User;
 using NebulaPlugin.Api.Services;
+using NebulaPlugin.Application.Mongo;
 
 namespace NebulaPlugin.Api;
 

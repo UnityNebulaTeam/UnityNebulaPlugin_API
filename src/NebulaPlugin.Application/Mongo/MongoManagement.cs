@@ -10,7 +10,7 @@ public class MongoManagement : DatabaseManager
     public MongoManagement(string _Url)
     {
         if (string.IsNullOrWhiteSpace(_Url))
-            throw new MongoEmptyValueException("connection string cannot be null ", nameof(MongoClient));
+            throw new MongoEmptyValueException("connection string cannot be found ", "MongoDB");
 
         connectionURL = _Url;
         client = new MongoClient(connectionURL);
@@ -331,7 +331,7 @@ public class MongoManagement : DatabaseManager
             var db = client.GetDatabase(dbName);
             var collection = db.GetCollection<BsonDocument>(tableName);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", doc["_id"]); //! TODO
-            
+
             var res = await db.GetCollection<BsonDocument>(tableName).ReplaceOneAsync(filter, doc);
 
             // Console.WriteLine($"{res.IsAcknowledged} and {res.ModifiedCount}");

@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using System.Text.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using NebulaPlugin.Api.Dtos.Mongo;
-using Newtonsoft.Json;
+using NebulaPlugin.Api.EFCore;
+using NebulaPlugin.Api.Models;
+using NebulaPlugin.Common.Enums;
 
 namespace NebulaPlugin.Api.Helpers;
 
@@ -70,5 +73,19 @@ public static class Helper
         var jsonOutput = bsonArray.ToJson(settings);
 
         return jsonOutput;
+    }
+
+    public static string GetConnectionStringFromHttpContext(HttpContext context, AppDbContext dbContext, DbTypes dbType)
+    {
+        string? nameIdentifier = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        Database? userDb = dbContext.Databases.FirstOrDefault(db => db.UserId == nameIdentifier && string.Equals(db.KeyIdentifier, dbType.ToString()));
+
+        if (userDb is null)
+            return string.Empty;
+
+        return userDb.ConnectionString;
+
+
     }
 }

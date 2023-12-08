@@ -1,33 +1,25 @@
-using System.Security.Claims;
 using System.Text.Json;
 using MongoDB.Bson;
 using NebulaPlugin.Api.Dtos.Mongo;
 using NebulaPlugin.Api.Dtos.Mongo.Responses;
 using NebulaPlugin.Api.EFCore;
 using NebulaPlugin.Api.Helpers;
-using NebulaPlugin.Api.Models;
 using NebulaPlugin.Application.Mongo;
 using NebulaPlugin.Common.Enums;
 using NebulaPlugin.Common.Exceptions.MongoExceptions;
 
 
 namespace NebulaPlugin.Api.Services.Mongo;
+
 public class MongoService : IMongoService
 {
     private readonly MongoManagement _manager;
-    private readonly AppDbContext _dbContext;
-    public MongoService(HttpContext _httpContext, AppDbContext dbContext)
+
+    public MongoService(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext)
     {
-        _dbContext = dbContext;
 
-        string nameIdentifier = _httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        Database? userDb = _dbContext.Databases.FirstOrDefault(db => db.UserId == nameIdentifier && string.Equals(db.KeyIdentifier, DbTypes.MONGO.ToString()));
-
-        if (userDb is null)
-            throw new Exception($"{DbTypes.MONGO} database connection string not found for current user");
-
-        _manager = new(userDb.ConnectionString);
+        string? _connectionString = Helper.GetConnectionStringFromHttpContext(httpContextAccessor.HttpContext, dbContext, DbTypes.MONGO);
+        _manager = new(_connectionString);
     }
 
     #region DELETE
