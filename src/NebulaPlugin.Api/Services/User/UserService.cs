@@ -21,12 +21,18 @@ public class UserService : IUserService
 
     public async Task<UserDatabaseResponse> AddDatabaseAsync(AddUserDatabaseDto database, string userId)
     {
+        bool userDbExist = await _context.Databases.AnyAsync(db => db.KeyIdentifier == database.KeyIdentifier);
+
+        if (userDbExist)
+            throw new Exception($"{database.KeyIdentifier} database already exist for this user");
+
         Database db = new()
         {
             KeyIdentifier = database.KeyIdentifier,
             ConnectionString = database.ConnectionString,
             UserId = userId
         };
+
         _context.Databases.Add(db);
         await _context.SaveChangesAsync();
 

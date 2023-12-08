@@ -9,6 +9,7 @@ public class Database
     [Key]
     public Guid Id { get; set; }
     public string ConnectionString { get; set; } = null!;
+
     public string KeyIdentifier { get; set; } = null!;
 
     [ForeignKey("User")]
