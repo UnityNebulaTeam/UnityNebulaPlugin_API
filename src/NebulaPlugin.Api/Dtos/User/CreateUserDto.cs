@@ -8,10 +8,12 @@ public record CreateUserDto
     public string UserName { get => CreateUserNameIfUserNameNull(); init => _userName = value; }
     private string? _userName;
 
-    public CreateUserDto(string email, string password)
+    public AddUserDatabaseDto Db { get; set; }
+    public CreateUserDto(string email, string password, AddUserDatabaseDto db)
     {
         Email = email;
         Password = password;
+        Db = db;
     }
 
     private string CreateUserNameIfUserNameNull()

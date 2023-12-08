@@ -44,6 +44,16 @@ public class AuthService : IAuthService
             throw new AggregateException(result.Errors.Select(e => e.Description)
                                                       .Select(e => new Exception(e)));
 
+        Models.Database userDb = new()
+        {
+            KeyIdentifier = userDto.Db.KeyIdentifier,
+            ConnectionString = userDto.Db.ConnectionString,
+            UserId = user.Id //UserId here
+        };
+        await _context.Databases.AddAsync(userDb);
+
+        await _context.SaveChangesAsync();
+
         return result;
     }
     public async Task<TokenDto> ValidateUserAsync(AuthenticateUserDto authUserDto)
