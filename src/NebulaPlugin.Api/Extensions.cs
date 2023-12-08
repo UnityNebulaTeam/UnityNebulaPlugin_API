@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using NebulaPlugin.Api.Services.Auth;
 using NebulaPlugin.Api.Services.User;
+using NebulaPlugin.Api.Services;
 
 namespace NebulaPlugin.Api;
 
@@ -18,7 +19,8 @@ public static class Extensions
 {
     public static void AddServices(this IServiceCollection services)
     {
-        services.AddScoped<IMongoService, MongoService>();
+        // services.AddScoped<IMongoService, MongoService>();
+        services.AddScoped<IServiceManager, ServiceManager>();
         services.AddScoped<UserManager<User>, UserManager<User>>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();

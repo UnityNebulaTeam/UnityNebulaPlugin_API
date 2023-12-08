@@ -1,9 +1,13 @@
+using System.Security.Claims;
 using System.Text.Json;
 using MongoDB.Bson;
 using NebulaPlugin.Api.Dtos.Mongo;
 using NebulaPlugin.Api.Dtos.Mongo.Responses;
+using NebulaPlugin.Api.EFCore;
 using NebulaPlugin.Api.Helpers;
+using NebulaPlugin.Api.Models;
 using NebulaPlugin.Application.Mongo;
+using NebulaPlugin.Common.Enums;
 using NebulaPlugin.Common.Exceptions.MongoExceptions;
 
 
@@ -11,9 +15,19 @@ namespace NebulaPlugin.Api.Services.Mongo;
 public class MongoService : IMongoService
 {
     private readonly MongoManagement _manager;
-    public MongoService()
+    private readonly AppDbContext _dbContext;
+    public MongoService(HttpContext _httpContext, AppDbContext dbContext)
     {
-        _manager = new("mongodb+srv://Victory:7Aynras2-@gameserver.ptrocqn.mongodb.net/?retryWrites=true&w=majority");
+        _dbContext = dbContext;
+
+        string nameIdentifier = _httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        Database? userDb = _dbContext.Databases.FirstOrDefault(db => db.UserId == nameIdentifier && string.Equals(db.KeyIdentifier, DbTypes.MONGO.ToString()));
+
+        if (userDb is null)
+            throw new Exception($"{DbTypes.MONGO} database connection string not found for current user");
+
+        _manager = new(userDb.ConnectionString);
     }
 
     #region DELETE
