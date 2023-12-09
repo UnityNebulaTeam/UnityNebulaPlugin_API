@@ -28,14 +28,11 @@ public class MongoManagement : DatabaseManager
         try
         {
             await client.GetDatabase(dbName).CreateCollectionAsync(tableName);
-            Console.WriteLine($" Veritabanı Oluşturuldu");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($" Veritabanı oluşturulamadı. Hata kodu {ex.Message}");
             throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
-
         }
     }
     /// <summary>
@@ -50,7 +47,6 @@ public class MongoManagement : DatabaseManager
         try
         {
             await client.GetDatabase(dbName).CreateCollectionAsync(tableName);
-            Console.WriteLine("Table Oluşturuldu");
             return true;
         }
         catch (Exception ex)
@@ -75,16 +71,13 @@ public class MongoManagement : DatabaseManager
         {
             doc["_id"] = ObjectId.GenerateNewId();
             await client.GetDatabase(dbName).GetCollection<BsonDocument>(tableName).InsertOneAsync(doc);
-            Console.WriteLine("Veri Seti Eklendi");
 
             return true;
 
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Veri oluşturulamadı. Hata Mesajı : {ex.Message}");
             throw new MongoOperationFailedException($" '{tableName}' 'item' opearation failed: {ex.Message}");
-
         }
     }
 
@@ -102,12 +95,10 @@ public class MongoManagement : DatabaseManager
         try
         {
             await client.DropDatabaseAsync(dbName);
-            Console.WriteLine($"{dbName} veritabanı silindi");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{dbName} veritabanı silinemedi. {ex.Message}");
             throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
         }
     }
@@ -125,12 +116,10 @@ public class MongoManagement : DatabaseManager
         {
             var database = client.GetDatabase(dbName);
             await database.DropCollectionAsync(tableName);
-            Console.WriteLine($"{tableName} koleksiyonu silindi");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{tableName} koleksiyonu silinemedi. Hata kodu: {ex.Message}");
             throw new MongoOperationFailedException($" '{tableName}' table opearation failed: {ex.Message}");
 
         }
@@ -150,17 +139,11 @@ public class MongoManagement : DatabaseManager
         {
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
             var result = await client.GetDatabase(dbName).GetCollection<BsonDocument>(tableName).DeleteOneAsync(filter);
-            if (result.DeletedCount > 0)
-            {
-                Console.WriteLine($"{id} numaralı döküman başarıyla silindi");
-                return true;
-            }
-            else
-                return false;
+
+            return result.DeletedCount > 0 ? true : false;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{id} numaralı döküman silinemedi. Hata kodu {ex.Message}");
             throw new MongoOperationFailedException($" '{tableName}' 'item' opearation failed: {ex.Message}");
 
         }
@@ -188,13 +171,10 @@ public class MongoManagement : DatabaseManager
             }
 
             return result;
-
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Veritabanları okunamadı. Hata kodu {ex.Message}");
             throw new MongoOperationFailedException($"database opearation failed: {ex.Message}");
-
         }
     }
 
@@ -214,10 +194,8 @@ public class MongoManagement : DatabaseManager
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Koleksiyonlar okunamadı {ex.Message}");
             throw new MongoOperationFailedException($"database opearation failed: {ex.Message}");
 
-            return null;
         }
     }
 
@@ -239,7 +217,6 @@ public class MongoManagement : DatabaseManager
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Itemler okunamadı {ex.Message}");
             throw new MongoOperationFailedException($"database opearation failed: {ex.Message}");
         }
     }
@@ -273,12 +250,10 @@ public class MongoManagement : DatabaseManager
                     await newDatabase.CreateCollectionAsync("deneme");
             }
             await client.DropDatabaseAsync(oldDbName);
-            Console.WriteLine("Veritabanı Güncellendi");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Veritabanı güncellenemedi {ex.Message} {ex.InnerException}");
             throw new MongoOperationFailedException($" '{oldDbName}' database opearation failed: {ex.Message}");
         }
     }
@@ -303,15 +278,11 @@ public class MongoManagement : DatabaseManager
             if (documents.Count > 0)
                 await collection.InsertManyAsync(documents);
             await db.DropCollectionAsync(oldTableName);
-            Console.WriteLine("Table  Güncellendi");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Table Guncellenmedi {ex.Message}");
             throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
-
-
 
         }
     }
@@ -334,8 +305,6 @@ public class MongoManagement : DatabaseManager
 
             var res = await db.GetCollection<BsonDocument>(tableName).ReplaceOneAsync(filter, doc);
 
-            // Console.WriteLine($"{res.IsAcknowledged} and {res.ModifiedCount}");
-
             if (!(res.ModifiedCount > 0) || !res.IsAcknowledged)
                 throw new MongoOperationFailedException($" '{dbName}' database opearation failed");
 
@@ -345,7 +314,6 @@ public class MongoManagement : DatabaseManager
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Veri güncellenemedi. Hata kodu {ex.Message}");
             throw new MongoOperationFailedException($" '{dbName}' database opearation failed: {ex.Message}");
 
         }
@@ -373,8 +341,5 @@ public class MongoManagement : DatabaseManager
             if (!collectionExist)
                 throw new MongoNotFoundException(collectionName);
         }
-
-
     }
-
 }

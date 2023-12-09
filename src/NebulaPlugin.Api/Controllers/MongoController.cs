@@ -20,8 +20,8 @@ public class MongoController : BaseController
     [HttpPost("db")]
     public async Task<ActionResult> CreateDatabase([FromBody] CreateDatabaseDto database)
     {
-        var res = await _manager.Mongo.CreateDatabaseAsync(database);
-        return Ok(res);
+        await _manager.Mongo.CreateDatabaseAsync(database);
+        return StatusCode(201);
     }
 
     [HttpGet("db")]
@@ -36,16 +36,16 @@ public class MongoController : BaseController
     public async Task<ActionResult> DeleteDatabase([FromQuery] DeleteDatabaseDto database)
     {
 
-        var res = await _manager.Mongo.DeleteDatabaseAsync(database);
-        return Ok(res);
+        await _manager.Mongo.DeleteDatabaseAsync(database);
+        return StatusCode(204);
 
     }
 
     [HttpPut("db")]
     public async Task<ActionResult> UpdateDatabase([FromBody] UpdateDatabaseDto database)
     {
-        var res = await _manager.Mongo.UpdateDatabase(database);
-        return Ok(res);
+        await _manager.Mongo.UpdateDatabase(database);
+        return StatusCode(204);
 
     }
 
@@ -56,8 +56,8 @@ public class MongoController : BaseController
     [HttpPost("table")]
     public async Task<ActionResult> CreateTableAsync([FromBody] CreateTableDto table)
     {
-        var res = await _manager.Mongo.CreateTableAsync(table);
-        return Created("", res);
+        await _manager.Mongo.CreateTableAsync(table);
+        return StatusCode(201);
 
     }
 
@@ -71,16 +71,17 @@ public class MongoController : BaseController
     [HttpDelete("table")]
     public async Task<ActionResult> DeleteTable([FromQuery] DeleteTableDto table)
     {
-        var res = await _manager.Mongo.DeleteTableAsync(table);
-        return Ok(res);
+        await _manager.Mongo.DeleteTableAsync(table);
+        return StatusCode(204);
 
     }
 
     [HttpPut("table")]
     public async Task<ActionResult> UpdateTable([FromBody] UpdateTableDto table)
     {
-        var res = await _manager.Mongo.UpdateTable(table);
-        return Ok(res);
+        await _manager.Mongo.UpdateTable(table);
+        return StatusCode(204);
+
     }
 
     #endregion
@@ -90,8 +91,8 @@ public class MongoController : BaseController
     [HttpDelete("item")]
     public async Task<ActionResult> DeleteTableItem([FromQuery] DeleteItemDto item)
     {
-        var res = await _manager.Mongo.DeleteItemAsync(item);
-        return Ok(res);
+        await _manager.Mongo.DeleteItemAsync(item);
+        return StatusCode(204);
 
     }
 
@@ -99,7 +100,7 @@ public class MongoController : BaseController
     public async Task<ActionResult> CreateTableItemAsync([FromBody] CreateTableItemDto item)
     {
         await _manager.Mongo.CreateItemAsync(item);
-        return Created();
+        return StatusCode(201);
 
     }
 
@@ -116,10 +117,9 @@ public class MongoController : BaseController
     [HttpPut("item")]
     public async Task<ActionResult> UpdateTableItem([FromBody] UpdateTableItemDto item)
     {
-        var res = await _manager.Mongo.UpdateTableItem(item);
+        await _manager.Mongo.UpdateTableItem(item);
 
-        Console.WriteLine(res);
-        return Ok(res);
+        return StatusCode(204);
     }
 
     #endregion

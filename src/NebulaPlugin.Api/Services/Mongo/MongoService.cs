@@ -23,31 +23,31 @@ public class MongoService : IMongoService
     }
 
     #region DELETE
-    public async Task<DatabaseResponse> DeleteDatabaseAsync(DeleteDatabaseDto database)
+    public async Task DeleteDatabaseAsync(DeleteDatabaseDto database)
     {
         var deleted = await _manager.DeleteDatabase(database.Name);
 
         if (!deleted)
             throw new MongoOperationFailedException(database.Name, "Delete failed");
 
-        return new(database.Name);
+        ;
     }
-    public async Task<TableItemResponse> DeleteItemAsync(DeleteItemDto item)
+    public async Task DeleteItemAsync(DeleteItemDto item)
     {
         var deleted = await _manager.DeleteItem(item.DbName, item.Name, item.Id);
         if (!deleted)
             throw new MongoOperationFailedException(item.Id, "id delete failed");
 
-        return new(item.Id);
+
 
     }
-    public async Task<TableResponse> DeleteTableAsync(DeleteTableDto table)
+    public async Task DeleteTableAsync(DeleteTableDto table)
     {
         var deleted = await _manager.DeleteTable(table.DbName, table.Name);
         if (!deleted)
             throw new MongoOperationFailedException(table.Name, "table delete failed");
 
-        return new(table.Name);
+
     }
 
     #endregion
@@ -57,11 +57,9 @@ public class MongoService : IMongoService
     {
         List<ReadDatabaseDto> result = new();
         var databases = await _manager.ReadDatabases();
-        foreach (var item in databases)
-        {
-            var dbItem = new ReadDatabaseDto(item);
-            result.Add(dbItem);
-        }
+
+        if (databases is not null)
+            databases.ForEach(db => result.Add(new ReadDatabaseDto(db)));
 
         return result;
     }
@@ -69,7 +67,9 @@ public class MongoService : IMongoService
     {
         List<TableDto> tables = new();
         var dbTables = await _manager.ReadTables(table.DbName);
-        dbTables.ForEach(t => tables.Add(new TableDto(t)));
+
+        if (dbTables is not null)
+            dbTables.ForEach(t => tables.Add(new TableDto(t)));
         return tables;
     }
     public async Task<List<JsonElement>> GetAllTableItemsAsync(ReadTableItemsDto item)
@@ -77,7 +77,8 @@ public class MongoService : IMongoService
         List<JsonElement> tableItems = new();
         List<BsonDocument>? bsonItems = await _manager.ReadItems(item.DbName, item.TableName);
 
-        bsonItems.ForEach(d => tableItems.Add(Helper.ConvertBsonDocumentToJsonElement(d)));
+        if (bsonItems is not null)
+            bsonItems.ForEach(d => tableItems.Add(Helper.ConvertBsonDocumentToJsonElement(d)));
 
         return tableItems;
     }
@@ -85,23 +86,22 @@ public class MongoService : IMongoService
     #endregion
 
     #region INSERT
-    public async Task<DatabaseResponse> CreateDatabaseAsync(CreateDatabaseDto database)
+    public async Task CreateDatabaseAsync(CreateDatabaseDto database)
     {
         var created = await _manager.CreateDatabase(database.Name, database.TableName);
 
         if (!created)
             throw new MongoOperationFailedException(database.Name, "create failed");
 
-        return new(database.Name);
+
     }
-    public async Task<TableResponse> CreateTableAsync(CreateTableDto table)
+    public async Task CreateTableAsync(CreateTableDto table)
     {
         var created = await _manager.CreateTable(table.DbName, table.Name);
 
         if (!created)
             throw new MongoOperationFailedException(table.Name, "table create failed");
 
-        return new(table.Name);
     }
     public async Task CreateItemAsync(CreateTableItemDto item)
     {
@@ -115,26 +115,23 @@ public class MongoService : IMongoService
     #endregion
 
     #region UPDATE
-    public async Task<DatabaseResponse> UpdateDatabase(UpdateDatabaseDto database)
+    public async Task UpdateDatabase(UpdateDatabaseDto database)
     {
         var updated = await _manager.UpdateDatabase(database.Name, database.NewDbName);
 
         if (!updated)
             throw new MongoOperationFailedException(database.Name, " update failed");
 
-
-        return new(database.NewDbName);
     }
-    public async Task<TableResponse> UpdateTable(UpdateTableDto table)
+    public async Task UpdateTable(UpdateTableDto table)
     {
         var updated = await _manager.UpdateTable(table.DbName, table.Name, table.NewTableName);
 
         if (!updated)
             throw new MongoOperationFailedException(table.NewTableName, "table update failed");
 
-        return new(table.NewTableName);
     }
-    public async Task<TableItemResponse> UpdateTableItem(UpdateTableItemDto item)
+    public async Task UpdateTableItem(UpdateTableItemDto item)
     {
         BsonDocument bsonDoc = BsonDocument.Parse(item.Doc.ToString());
 
@@ -144,14 +141,10 @@ public class MongoService : IMongoService
 
         bsonDoc["_id"] = new ObjectId(bsonDoc["_id"].AsString);
 
-        Console.WriteLine(bsonDoc);
-
         var updated = await _manager.UpdateItem(item.DbName, item.TableName, bsonDoc);
 
         if (!updated)
             throw new MongoOperationFailedException(item.TableName, "table item update failed");
-
-        return new(bsonDoc["_id"].ToString());
 
     }
 
