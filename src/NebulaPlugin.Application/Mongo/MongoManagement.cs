@@ -42,11 +42,11 @@ public class MongoManagement : DatabaseManager
     /// <param name="tableName"></param>
     public override async Task<bool> CreateTable(string dbName, string tableName)
     {
-        await CheckIfDatabaseCollectionExists(dbName: dbName);
+        var db = await GetExistingDb(dbName);
 
         try
         {
-            await client.GetDatabase(dbName).CreateCollectionAsync(tableName);
+            await db.CreateCollectionAsync(tableName);
             return true;
         }
         catch (Exception ex)
@@ -65,13 +65,12 @@ public class MongoManagement : DatabaseManager
     /// <param name="doc">Veri seti</param>
     public override async Task<bool> CreateItem(string dbName, string tableName, BsonDocument doc)
     {
-        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
+        var dbCollection = await GetExistingDbCollection(dbName, tableName);
 
         try
         {
             doc["_id"] = ObjectId.GenerateNewId();
-            await client.GetDatabase(dbName).GetCollection<BsonDocument>(tableName).InsertOneAsync(doc);
-
+            await dbCollection.InsertOneAsync(doc);
             return true;
 
         }
@@ -91,7 +90,8 @@ public class MongoManagement : DatabaseManager
     /// <param name="dbName">Silinecek veritabanı adı</param>
     public override async Task<bool> DeleteDatabase(string dbName)
     {
-        await CheckIfDatabaseCollectionExists(dbName: dbName);
+        await GetExistingDb(dbName);
+
         try
         {
             await client.DropDatabaseAsync(dbName);
@@ -110,7 +110,7 @@ public class MongoManagement : DatabaseManager
     /// <param name="tableName">Koleksiyonun adı</param>
     public override async Task<bool> DeleteTable(string dbName, string tableName)
     {
-        await CheckIfDatabaseCollectionExists(dbName, tableName);
+        await GetExistingDbCollection(dbName, tableName);
 
         try
         {
@@ -133,12 +133,11 @@ public class MongoManagement : DatabaseManager
     /// <param name="id">Bsondocument id'si</param>
     public override async Task<bool> DeleteItem(string dbName, string tableName, string id)
     {
-        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
-
+        var dbCollection = await GetExistingDbCollection(dbName, tableName);
         try
         {
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
-            var result = await client.GetDatabase(dbName).GetCollection<BsonDocument>(tableName).DeleteOneAsync(filter);
+            var result = await dbCollection.DeleteOneAsync(filter);
 
             return result.DeletedCount > 0 ? true : false;
         }
@@ -160,17 +159,12 @@ public class MongoManagement : DatabaseManager
     /// </summary>
     public override async Task<List<string>> ReadDatabases()
     {
-        List<string> result = new();
+
         try
         {
             var databases = await client.ListDatabaseNames().ToListAsync();
 
-            foreach (var db in databases.ToList())
-            {
-                result.Add(db);
-            }
-
-            return result;
+            return databases;
         }
         catch (Exception ex)
         {
@@ -184,10 +178,9 @@ public class MongoManagement : DatabaseManager
     /// <param name="dbName">Koleksiyonlarını görmek istediğiniz veritabanı</param>
     public override async Task<List<string>> ReadTables(string dbName)
     {
-        await CheckIfDatabaseCollectionExists(dbName: dbName);
+        var db = await GetExistingDb(dbName);
         try
         {
-            var db = client.GetDatabase(dbName);
             var collections = await db.ListCollectionNamesAsync();
 
             return collections.ToList();
@@ -206,13 +199,11 @@ public class MongoManagement : DatabaseManager
     /// <param name="tableName">Verilerin bağlı olduğu koleksiyon adı</param>
     public override async Task<List<BsonDocument>> ReadItems(string dbName, string tableName)
     {
-        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
+        var dbCollection = await GetExistingDbCollection(dbName, tableName);
 
         try
         {
-            var db = client.GetDatabase(dbName);
-            var table = db.GetCollection<BsonDocument>(tableName);
-            var documents = await table.FindAsync(new BsonDocument());
+            var documents = await dbCollection.FindAsync(new BsonDocument());
             return documents.ToList();
         }
         catch (Exception ex)
@@ -231,11 +222,11 @@ public class MongoManagement : DatabaseManager
     /// <param name="newDbName">Yeni veritabanı adı</param>
     public override async Task<bool> UpdateDatabase(string oldDbName, string newDbName)
     {
-        await CheckIfDatabaseCollectionExists(dbName: oldDbName);
+
+        var oldDatabase = await GetExistingDb(oldDbName);
 
         try
         {
-            var oldDatabase = client.GetDatabase(oldDbName);
             var newDatabase = client.GetDatabase(newDbName);
 
             var collectionNames = await oldDatabase.ListCollectionNamesAsync();
@@ -266,13 +257,12 @@ public class MongoManagement : DatabaseManager
     public override async Task<bool> UpdateTable(string dbName, string oldTableName, string newTableName)
     {
 
-        await CheckIfDatabaseCollectionExists(dbName, oldTableName);
+        var dbCollection = await GetExistingDbCollection(dbName, oldTableName);
 
         try
         {
-            var db = client.GetDatabase(dbName);
-            var table = db.GetCollection<BsonDocument>(oldTableName);
-            var documents = table.Find(new BsonDocument()).ToList();
+            var db = client.GetDatabase(dbName); //!
+            var documents = dbCollection.Find(new BsonDocument()).ToList();
             await client.GetDatabase(dbName).CreateCollectionAsync(newTableName);
             var collection = client.GetDatabase(dbName).GetCollection<BsonDocument>(newTableName);
             if (documents.Count > 0)
@@ -295,21 +285,16 @@ public class MongoManagement : DatabaseManager
     /// <param name="doc">Güncellenecek veri</param>
     public override async Task<bool> UpdateItem(string dbName, string tableName, BsonDocument doc)
     {
-        await CheckIfDatabaseCollectionExists(dbName: dbName, collectionName: tableName);
+        var dbCollection = await GetExistingDbCollection(dbName, tableName);
 
         try
         {
-            var db = client.GetDatabase(dbName);
-            var collection = db.GetCollection<BsonDocument>(tableName);
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", doc["_id"]); //! TODO
-
-            var res = await db.GetCollection<BsonDocument>(tableName).ReplaceOneAsync(filter, doc);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", doc["_id"]);
+            var res = await dbCollection.ReplaceOneAsync(filter, doc);
 
             if (!(res.ModifiedCount > 0) || !res.IsAcknowledged)
                 throw new MongoOperationFailedException($" '{dbName}' database opearation failed");
 
-
-            Console.WriteLine($"Item güncellendi.");
             return true;
         }
         catch (Exception ex)
@@ -320,26 +305,33 @@ public class MongoManagement : DatabaseManager
     }
     #endregion
 
-    private async Task CheckIfDatabaseCollectionExists(string dbName, string collectionName = null)
+    private async Task<IMongoDatabase> GetExistingDb(string dbName)
     {
+        var databaseNames = await client.ListDatabaseNames().ToListAsync();
 
-        var databases = await client.ListDatabaseNames().ToListAsync();
-        var databaseExist = databases.Exists(d => d == dbName);
+        if (!databaseNames.Contains(dbName))
+            throw new MongoNotFoundException(dbName);
 
-        if (!databaseExist)
+        return client.GetDatabase(dbName);
+    }
+
+    private async Task<IMongoCollection<BsonDocument>> GetExistingDbCollection(string dbName, string collectionName)
+    {
+        var databaseNames = await client.ListDatabaseNames().ToListAsync();
+
+        if (!databaseNames.Contains(dbName))
             throw new MongoNotFoundException(dbName);
 
         var db = client.GetDatabase(dbName);
 
-        if (collectionName is not null)
-        {
-            var filter = new BsonDocument("name", collectionName);
-            var collections = await db.ListCollectionsAsync(new ListCollectionsOptions { Filter = filter });
+        var filter = Builders<BsonDocument>.Filter.Eq("name", collectionName);
+        var collectionCursor = await db.ListCollectionsAsync(new ListCollectionsOptions { Filter = filter });
 
-            var collectionExist = await collections.AnyAsync();
+        if (!await collectionCursor.AnyAsync())
+            throw new MongoNotFoundException(collectionName);
 
-            if (!collectionExist)
-                throw new MongoNotFoundException(collectionName);
-        }
+        return db.GetCollection<BsonDocument>(collectionName);
+
     }
+
 }
