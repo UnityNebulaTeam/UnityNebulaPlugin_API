@@ -14,4 +14,4 @@ Esnek endpoint yapısı, istenilen veritabanı üzerinde çeşitli operasyonlar�
 Bu API projesi, geliştiricilerin veritabanı işlemlerini hızlı, güvenli ve esnek bir şekilde yapmalarını sağlar, yazılım geliştirme sürecini optimize etmeyi hedefler.
 
 - Authentication & Authorization: [Auth Documentation](Auth/README.md)
-- MongoDb : [Mongo Documentation](MongoDb/README.md)
+- MongoDB : [Mongo Documentation](MongoDb/README.md)
