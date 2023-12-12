@@ -30,7 +30,7 @@
 
 Success: ```201 Created```
 
-Mistake:
+Error:
 ```json
 {
      "success": false,
@@ -72,7 +72,7 @@ Success: ``` 200 OK ```
 
 ```
 
-Mistake:
+Error:
 ```json
 {
      "success": false,
@@ -117,7 +117,7 @@ Success: ``` 200 OK ```
 
 ```
 
-Mistake:
+Error:
 ```json
 {
      "success": false,
