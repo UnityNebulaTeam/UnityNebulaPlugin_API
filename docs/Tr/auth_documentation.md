@@ -79,3 +79,48 @@ Hata:
     "message": "Email/Username or password is incorrect"
 }
 ```
+
+### Token Yenileme
+
+|parameter           | is required  |description|
+|--------------------|--------------|-----------|
+| JWT Token          | *required    ||
+| Refresh Token      | *required    ||
+
+
+- **Örnek Request**
+
+- Endpoint
+```[POST]  ~/api/auth/refresh ```
+
+- Body:
+
+```json 
+{
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJyYW1hbHRAZ21haWwuY29tIiwiZGJzIjoibnVsbCIsImV4cCI6MTcwMTYzMDgzMSwiaXNzIjoiTmVidWxhUGx1Z2luQVBJIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MTM1In0.b8yMKMmyK5foJOAKynDeIoA4ybeCtD-5EsqzW98DqxY",
+    "refreshToken": "OCA3TySU6/jmqf14lmHNFSFDwA1Vpqomyuo/6UEc5jk="
+}
+}
+```
+
+- **Response**
+
+Başarılı: ``` 200 OK ```
+```json 
+{
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJyYW1hbHRAZ21haWwuY29tIiwiZGJzIjoibnVsbCIsImV4cCI6MTcwMTYzMDgzMSwiaXNzIjoiTmVidWxhUGx1Z2luQVBJIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MTM1In0.b8yMKMmyK5foJOAKynDeIoA4ybeCtD-5EsqzW98DqxY",
+    "refreshToken": "OCA3TySU6/jmqf14lmHNFSFDwA1Vpqomyuo/6UEc5jk="
+}
+}
+
+```
+
+Hata: 
+```json
+{
+    "success": false,
+    "message": "Invalid token"
+}
+```
