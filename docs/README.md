@@ -1,4 +1,6 @@
 # Nebula Plugin API
+
+### Tr
 Nebula API, kullanıcıların veritabanı bağlantı bilgileriyle istedikleri veritabanını yönetmelerini sağlar. Veritabanı, tablo oluşturma, güncelleme, silme ve okuma gibi temel işlemleri gerçekleştirebilir.
 
 Veritabanı Yaratma ve Silme: İstediğiniz veritabanını oluşturabilir ve gerektiğinde silebilirsiniz.
@@ -13,5 +15,26 @@ Esnek endpoint yapısı, istenilen veritabanı üzerinde çeşitli operasyonlar�
 
 Bu API projesi, geliştiricilerin veritabanı işlemlerini hızlı, güvenli ve esnek bir şekilde yapmalarını sağlar, yazılım geliştirme sürecini optimize etmeyi hedefler.
 
-- Authentication & Authorization: [Auth Documentation](Auth/README.md)
-- MongoDB : [Mongo Documentation](MongoDb/README.md)
+- Kimlik doğrulama & Yetkilendirme : [Auth Documentation (TR)](Tr/auth_documentation.md)
+- MongoDB : [MongoDB Documentation (TR)](Tr/mongo_documentation.md)
+
+### En
+
+Nebula API allows users to manage any database they want with database data transfer information. The database can perform basic operations such as creating, updating, deleting and reading tables.
+
+Database Creation and Deletion: you can delete any database and accounts you want.
+
+Table Operations: You can delete new tables or existing tables.
+
+Data Operations: Dedicated endpoints are available for selecting data into the database, updating, deleting and reading data.
+
+This API allows users to independently implement data storage operations in programming languages. It has a security-oriented structure and database connection information and transactions are protected with end-to-end encryption.
+
+Its flexible endpoint structure provides the opportunity to perform various operations on the desired database.
+
+This API project allows developers to create databases quickly, securely and flexibly, aiming to optimize the software development process.
+
+- Authentication & Authorization: [Auth Documentation (EN)](En/auth_documentation.md)
+- MongoDB : [MongoDB Documentation (EN)](En/mongo_documentation.md)
+
+
