@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NebulaPlugin.Api.Dtos.User;
 using NebulaPlugin.Api.Dtos.User.Response;
 using NebulaPlugin.Api.EFCore;
+using NebulaPlugin.Api.Helpers;
 using NebulaPlugin.Api.Models;
 
 namespace NebulaPlugin.Api.Services.User;
@@ -26,10 +26,12 @@ public class UserService : IUserService
         if (userDbExist)
             throw new Exception($"{database.KeyIdentifier} database already exist for this user");
 
+        string encryptedConnection = AesCrypter.EncryptToString(database.ConnectionString);
+
         Connection db = new()
         {
             KeyIdentifier = database.KeyIdentifier,
-            ConnectionString = database.ConnectionString,
+            ConnectionString = encryptedConnection,
             UserId = userId
         };
 
@@ -40,12 +42,12 @@ public class UserService : IUserService
 
     public async Task UpdateConnectionAsync(UpdateUserDatabaseDto database, string userId, string type)
     {
-        Connection? db = await _context.Connections.Where(db => db.UserId == userId).FirstOrDefaultAsync(db => db.KeyIdentifier == type.ToUpper()); 
+        Connection? db = await _context.Connections.Where(db => db.UserId == userId).FirstOrDefaultAsync(db => db.KeyIdentifier == type.ToUpper());
 
         if (db is null)
             throw new Exception($"{type} database record not found for this user. ");
 
-        db.ConnectionString = database.ConnectionString;
+        db.ConnectionString = AesCrypter.EncryptToString(database.ConnectionString);
 
         _context.Connections.Update(db);
 
@@ -62,7 +64,8 @@ public class UserService : IUserService
     {
         var userDbs = await _context.Connections.Where(db => db.UserId == userId).ToListAsync();
         List<UserDatabaseResponse> res = new();
-        userDbs.ForEach(db => res.Add(new UserDatabaseResponse(db.KeyIdentifier, db.ConnectionString)));
+
+        userDbs.ForEach(db => res.Add(new UserDatabaseResponse(db.KeyIdentifier, AesCrypter.DecryptBytesToString(db.ConnectionString))));
 
         return res;
 
@@ -76,7 +79,7 @@ public class UserService : IUserService
 
         List<UserDatabaseResponse> userDbs = new();
 
-        userDatabases.ForEach(ud => userDbs.Add(new UserDatabaseResponse(ud.KeyIdentifier, ud.ConnectionString)));
+        userDatabases.ForEach(ud => userDbs.Add(new UserDatabaseResponse(ud.KeyIdentifier, AesCrypter.DecryptBytesToString(ud.ConnectionString))));
 
         if (dbUser is null)
             throw new Exception("User not found");

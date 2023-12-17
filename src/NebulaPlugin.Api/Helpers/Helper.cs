@@ -84,7 +84,8 @@ public static class Helper
         if (dbConn is null)
             return string.Empty;
 
-        return dbConn.ConnectionString;
+        return AesCrypter.DecryptBytesToString(dbConn.ConnectionString);
+
 
 
     }
