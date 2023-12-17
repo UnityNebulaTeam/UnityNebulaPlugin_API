@@ -18,24 +18,24 @@ public class UserController : BaseController
     }
 
     [HttpGet("db")]
-    public async Task<IActionResult> GetDbs()
+    public async Task<IActionResult> GetConnections()
     {
-        var res = await _userService.GetUsersDatabases(UserId);
+        var res = await _userService.GetUsersConnections(UserId);
         return Ok(res);
     }
 
     [HttpPost("db")]
-    public async Task<IActionResult> CreateDb(AddUserDatabaseDto databaseDto)
+    public async Task<IActionResult> CreateConnection(AddUserDatabaseDto databaseDto)
     {
-        await _userService.AddDatabaseAsync(databaseDto, UserId);
+        await _userService.AddConnectionAsync(databaseDto, UserId);
 
         return StatusCode(201);
     }
 
     [HttpPut("db/{type}")]
-    public async Task<IActionResult> UpdateDb(UpdateUserDatabaseDto databaseDto, [FromRoute] string type)
+    public async Task<IActionResult> UpdateConnection(UpdateUserDatabaseDto databaseDto, [FromRoute] string type)
     {
-        await _userService.UpdateDatabaseAsync(databaseDto, UserId, type);
+        await _userService.UpdateConnectionAsync(databaseDto, UserId, type);
 
         return StatusCode(204);
     }

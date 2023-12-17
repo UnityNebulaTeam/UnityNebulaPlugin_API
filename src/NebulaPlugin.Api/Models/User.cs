@@ -8,5 +8,5 @@ public class User : IdentityUser
     public string? RefreshToken { get; set; }
     public DateTime RefreshTokenExpireDate { get; set; }
 
-    public ICollection<Database>? Databases { get; set; }
+    public ICollection<Connection>? Connections { get; set; }
 }

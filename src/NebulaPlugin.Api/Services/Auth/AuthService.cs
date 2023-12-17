@@ -44,13 +44,13 @@ public class AuthService : IAuthService
             throw new AggregateException(result.Errors.Select(e => e.Description)
                                                       .Select(e => new Exception(e)));
 
-        Models.Database userDb = new()
+        Models.Connection userDb = new()
         {
             KeyIdentifier = userDto.Db.KeyIdentifier,
             ConnectionString = userDto.Db.ConnectionString,
             UserId = user.Id //UserId here
         };
-        await _context.Databases.AddAsync(userDb);
+        await _context.Connections.AddAsync(userDb);
 
         await _context.SaveChangesAsync();
 
@@ -59,8 +59,8 @@ public class AuthService : IAuthService
     public async Task<TokenDto> ValidateUserAsync(AuthenticateUserDto authUserDto)
     {
         Models.User? dbUser = string.IsNullOrEmpty(authUserDto.Email)
-                            ? await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.UserName == authUserDto.UserName)
-                            : await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Email == authUserDto.Email);
+                            ? await _userManager.Users.Include(u => u.Connections).FirstOrDefaultAsync(u => u.UserName == authUserDto.UserName)
+                            : await _userManager.Users.Include(u => u.Connections).FirstOrDefaultAsync(u => u.Email == authUserDto.Email);
 
         if (dbUser is null)
             throw new Exception("user not found by this email or username");
@@ -84,7 +84,7 @@ public class AuthService : IAuthService
 
         Claim? emailClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
 
-        var userWithDatabases = await _context.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Email == emailClaim.Value);
+        var userWithDatabases = await _context.Users.Include(u => u.Connections).FirstOrDefaultAsync(u => u.Email == emailClaim.Value);
 
         bool correctRefreshToken = string.Equals(userWithDatabases.RefreshToken, tokenDto.RefreshToken);
 
@@ -145,7 +145,7 @@ public class AuthService : IAuthService
 
     private async Task<List<Claim>> GetUserClaims(Models.User user)
     {
-        var userDatabasesJsonObj = JsonSerializer.Serialize(user.Databases.Select(db => db.KeyIdentifier));
+        var userDatabasesJsonObj = JsonSerializer.Serialize(user.Connections.Select(db => db.KeyIdentifier));
         List<Claim> claims = new()
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),

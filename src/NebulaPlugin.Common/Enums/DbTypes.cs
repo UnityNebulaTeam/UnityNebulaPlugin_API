@@ -2,7 +2,7 @@ namespace NebulaPlugin.Common.Enums;
 
 public enum DbTypes
 {
-    MONGO,
+    MONGODB,
     SQLITE,
     MYSQL,
     PSGSQL,

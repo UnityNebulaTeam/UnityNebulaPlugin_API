@@ -12,7 +12,7 @@ public record AddUserDatabaseDto
     {
         ConnectionString = connectionString;
 
-        if (!Enum.TryParse<DbTypes>(keyIdentifier, false, out var type))
+        if (!Enum.TryParse<DbTypes>(keyIdentifier, true, out var type))
             throw new ArgumentException("Invalid DbType provided: " + keyIdentifier);
 
 

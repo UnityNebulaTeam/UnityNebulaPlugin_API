@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace NebulaPlugin.Api.Models;
 
-public class Database
+public class Connection
 {
     [Key]
     public Guid Id { get; set; }

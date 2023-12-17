@@ -5,7 +5,7 @@ using NebulaPlugin.Api.Services;
 
 namespace NebulaPlugin.Api.Controllers;
 
-[AuthorizeDbType("MONGO")]
+[AuthorizeDbType("MONGODB")]
 public class MongoController : BaseController
 {
     // private readonly IMongoService _service;

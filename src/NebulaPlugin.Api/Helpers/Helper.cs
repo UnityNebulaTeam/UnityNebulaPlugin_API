@@ -79,12 +79,12 @@ public static class Helper
     {
         string? nameIdentifier = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        Database? userDb = dbContext.Databases.FirstOrDefault(db => db.UserId == nameIdentifier && string.Equals(db.KeyIdentifier, dbType.ToString()));
+        Connection? dbConn = dbContext.Connections.FirstOrDefault(db => db.UserId == nameIdentifier && string.Equals(db.KeyIdentifier, dbType.ToString()));
 
-        if (userDb is null)
+        if (dbConn is null)
             return string.Empty;
 
-        return userDb.ConnectionString;
+        return dbConn.ConnectionString;
 
 
     }

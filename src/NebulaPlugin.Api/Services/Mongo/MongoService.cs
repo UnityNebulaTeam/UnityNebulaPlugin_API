@@ -18,7 +18,7 @@ public class MongoService : IMongoService
     public MongoService(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext)
     {
 
-        string? _connectionString = Helper.GetConnectionStringFromHttpContext(httpContextAccessor.HttpContext, dbContext, DbTypes.MONGO);
+        string? _connectionString = Helper.GetConnectionStringFromHttpContext(httpContextAccessor.HttpContext, dbContext, DbTypes.MONGODB);
         _manager = new(_connectionString);
     }
 

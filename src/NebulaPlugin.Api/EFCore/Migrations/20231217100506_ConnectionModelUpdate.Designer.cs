@@ -11,8 +11,8 @@ using NebulaPlugin.Api.EFCore;
 namespace NebulaPlugin.Api.EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231205101952_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231217100506_ConnectionModelUpdate")]
+    partial class ConnectionModelUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,7 +148,7 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("NebulaPlugin.Api.Models.Database", b =>
+            modelBuilder.Entity("NebulaPlugin.Api.Models.Connection", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,7 +170,7 @@ namespace NebulaPlugin.Api.EFCore.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Databases");
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("NebulaPlugin.Api.Models.User", b =>
@@ -294,10 +294,10 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("NebulaPlugin.Api.Models.Database", b =>
+            modelBuilder.Entity("NebulaPlugin.Api.Models.Connection", b =>
                 {
                     b.HasOne("NebulaPlugin.Api.Models.User", "User")
-                        .WithMany("Databases")
+                        .WithMany("Connections")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -307,7 +307,7 @@ namespace NebulaPlugin.Api.EFCore.Migrations
 
             modelBuilder.Entity("NebulaPlugin.Api.Models.User", b =>
                 {
-                    b.Navigation("Databases");
+                    b.Navigation("Connections");
                 });
 #pragma warning restore 612, 618
         }

@@ -19,35 +19,35 @@ public class UserService : IUserService
         _userManager = userManager;
     }
 
-    public async Task AddDatabaseAsync(AddUserDatabaseDto database, string userId)
+    public async Task AddConnectionAsync(AddUserDatabaseDto database, string userId)
     {
-        bool userDbExist = await _context.Databases.AnyAsync(db => db.KeyIdentifier == database.KeyIdentifier);
+        bool userDbExist = await _context.Connections.AnyAsync(db => db.KeyIdentifier == database.KeyIdentifier);
 
         if (userDbExist)
             throw new Exception($"{database.KeyIdentifier} database already exist for this user");
 
-        Database db = new()
+        Connection db = new()
         {
             KeyIdentifier = database.KeyIdentifier,
             ConnectionString = database.ConnectionString,
             UserId = userId
         };
 
-        _context.Databases.Add(db);
+        _context.Connections.Add(db);
         await _context.SaveChangesAsync();
 
     }
 
-    public async Task UpdateDatabaseAsync(UpdateUserDatabaseDto database, string userId, string type)
+    public async Task UpdateConnectionAsync(UpdateUserDatabaseDto database, string userId, string type)
     {
-        Database? db = await _context.Databases.Where(db => db.UserId == userId).FirstOrDefaultAsync(db => db.KeyIdentifier == type.ToUpper()); 
+        Connection? db = await _context.Connections.Where(db => db.UserId == userId).FirstOrDefaultAsync(db => db.KeyIdentifier == type.ToUpper()); 
 
         if (db is null)
             throw new Exception($"{type} database record not found for this user. ");
 
         db.ConnectionString = database.ConnectionString;
 
-        _context.Databases.Update(db);
+        _context.Connections.Update(db);
 
 
 
@@ -58,9 +58,9 @@ public class UserService : IUserService
 
     }
 
-    public async Task<List<UserDatabaseResponse>> GetUsersDatabases(string userId)
+    public async Task<List<UserDatabaseResponse>> GetUsersConnections(string userId)
     {
-        var userDbs = await _context.Databases.Where(db => db.UserId == userId).ToListAsync();
+        var userDbs = await _context.Connections.Where(db => db.UserId == userId).ToListAsync();
         List<UserDatabaseResponse> res = new();
         userDbs.ForEach(db => res.Add(new UserDatabaseResponse(db.KeyIdentifier, db.ConnectionString)));
 
@@ -70,9 +70,9 @@ public class UserService : IUserService
 
     public async Task<UserResult> GetUserDataAsync(string userId)
     {
-        Models.User? dbUser = await _userManager.Users.Include(u => u.Databases).FirstOrDefaultAsync(u => u.Id == userId);
+        Models.User? dbUser = await _userManager.Users.Include(u => u.Connections).FirstOrDefaultAsync(u => u.Id == userId);
 
-        var userDatabases = dbUser.Databases.ToList();
+        var userDatabases = dbUser.Connections.ToList();
 
         List<UserDatabaseResponse> userDbs = new();
 

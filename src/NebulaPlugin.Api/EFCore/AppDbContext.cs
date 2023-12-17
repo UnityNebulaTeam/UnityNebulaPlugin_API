@@ -25,5 +25,5 @@ public class AppDbContext : IdentityDbContext<User>
 
     // }
 
-    public DbSet<Database> Databases { get; set; }
+    public DbSet<Connection> Connections { get; set; }
 }

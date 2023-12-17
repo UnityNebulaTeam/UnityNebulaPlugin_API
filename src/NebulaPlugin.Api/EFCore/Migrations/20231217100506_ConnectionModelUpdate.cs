@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NebulaPlugin.Api.EFCore.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class ConnectionModelUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -159,7 +159,7 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Databases",
+                name: "Connections",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -169,9 +169,9 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Databases", x => x.Id);
+                    table.PrimaryKey("PK_Connections", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Databases_AspNetUsers_UserId",
+                        name: "FK_Connections_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -216,8 +216,8 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Databases_UserId",
-                table: "Databases",
+                name: "IX_Connections_UserId",
+                table: "Connections",
                 column: "UserId");
         }
 
@@ -240,7 +240,7 @@ namespace NebulaPlugin.Api.EFCore.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Databases");
+                name: "Connections");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -6,11 +6,11 @@ namespace NebulaPlugin.Api.Services.User;
 
 public interface IUserService
 {
-    Task AddDatabaseAsync(AddUserDatabaseDto database, string userId);
+    Task AddConnectionAsync(AddUserDatabaseDto database, string userId);
     // Task<string> GetConnectionStringByDatabaseIdAsync(Guid id);
     // string GetConnectionStringByDatabaseId(Guid id);
-    Task<List<UserDatabaseResponse>> GetUsersDatabases(string userId);
+    Task<List<UserDatabaseResponse>> GetUsersConnections(string userId);
     Task<UserResult> GetUserDataAsync(string userId);
 
-    Task UpdateDatabaseAsync(UpdateUserDatabaseDto database, string userId, string type);
+    Task UpdateConnectionAsync(UpdateUserDatabaseDto database, string userId, string type);
 }
