@@ -17,14 +17,14 @@ public class UserController : BaseController
         _userService = userService;
     }
 
-    [HttpGet("db")]
+    [HttpGet("connection")]
     public async Task<IActionResult> GetConnections()
     {
         var res = await _userService.GetUsersConnections(UserId);
         return Ok(res);
     }
 
-    [HttpPost("db")]
+    [HttpPost("connection")]
     public async Task<IActionResult> CreateConnection(AddUserDatabaseDto databaseDto)
     {
         await _userService.AddConnectionAsync(databaseDto, UserId);
@@ -32,7 +32,7 @@ public class UserController : BaseController
         return StatusCode(201);
     }
 
-    [HttpPut("db/{type}")]
+    [HttpPut("connection/{type}")]
     public async Task<IActionResult> UpdateConnection(UpdateUserDatabaseDto databaseDto, [FromRoute] string type)
     {
         await _userService.UpdateConnectionAsync(databaseDto, UserId, type);
