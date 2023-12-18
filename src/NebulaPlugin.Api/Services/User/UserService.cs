@@ -28,6 +28,8 @@ public class UserService : IUserService
 
         string encryptedConnection = AesCrypter.EncryptToString(database.ConnectionString);
 
+        Console.WriteLine("--------------------->" + encryptedConnection);
+
         Connection db = new()
         {
             KeyIdentifier = database.KeyIdentifier,

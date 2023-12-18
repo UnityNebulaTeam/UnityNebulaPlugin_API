@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NebulaPlugin.Api.Dtos.User;
 using NebulaPlugin.Api.EFCore;
+using NebulaPlugin.Api.Helpers;
 
 
 namespace NebulaPlugin.Api.Services.Auth;
@@ -47,7 +48,7 @@ public class AuthService : IAuthService
         Models.Connection userDb = new()
         {
             KeyIdentifier = userDto.Db.KeyIdentifier,
-            ConnectionString = userDto.Db.ConnectionString,
+            ConnectionString = AesCrypter.EncryptToString(userDto.Db.ConnectionString),
             UserId = user.Id //UserId here
         };
         await _context.Connections.AddAsync(userDb);
