@@ -236,7 +236,7 @@ public class MongoManagement : DatabaseManager
                 var newCollection = newDatabase.GetCollection<BsonDocument>(collectionName);
                 var documents = oldCollection.Find(new BsonDocument()).ToList();
                 if (documents.Count > 0)
-                    newCollection.InsertMany(documents);
+                    await newCollection.InsertManyAsync(documents);
                 else
                     await newDatabase.CreateCollectionAsync("deneme");
             }
