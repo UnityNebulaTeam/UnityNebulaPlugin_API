@@ -75,10 +75,7 @@ public static class Extensions
 
     public static void ConfigureSqlConnection(this IServiceCollection services, IConfiguration configuration)
     {
-        // var sqlServerSettings = configuration.GetSection("SqlServerSettings");
-        // services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(sqlServerSettings["ConnectionString"]));
         services.AddDbContext<AppDbContext>(opt => opt.UseSqlite("Data Source=Test.db"));
-
 
     }
 
