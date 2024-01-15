@@ -16,7 +16,7 @@ Esnek endpoint yapısı, istenilen veritabanı üzerinde çeşitli operasyonlar�
 Bu API projesi, geliştiricilerin veritabanı işlemlerini hızlı, güvenli ve esnek bir şekilde yapmalarını sağlar, yazılım geliştirme sürecini optimize etmeyi hedefler.
 
 - Kimlik doğrulama & Yetkilendirme : [Auth Documentation (TR)](Tr/auth_documentation.md)
-- Kimlik doğrulama & Yetkilendirme : [User Documentation (TR)](Tr/user_documentation.md)
+- Kullanıcı İşlemleri : [User Documentation (TR)](Tr/user_documentation.md)
 - MongoDB : [MongoDB Documentation (TR)](Tr/mongo_documentation.md)
 
 ### En
@@ -36,7 +36,7 @@ Its flexible endpoint structure provides the opportunity to perform various oper
 This API project allows developers to create databases quickly, securely and flexibly, aiming to optimize the software development process.
 
 - Authentication & Authorization: [Auth Documentation (EN)](En/auth_documentation.md)
-- Kimlik doğrulama & Yetkilendirme : [User Documentation (EN)](En/user_documentation.md)
+- User Actions : [User Documentation (EN)](En/user_documentation.md)
 - MongoDB : [MongoDB Documentation (EN)](En/mongo_documentation.md)
 
 
