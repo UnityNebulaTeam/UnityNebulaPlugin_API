@@ -19,6 +19,8 @@ Bu API projesi, geliştiricilerin veritabanı işlemlerini hızlı, güvenli ve 
 - Kullanıcı İşlemleri : [User Documentation (TR)](Tr/user_documentation.md)
 - MongoDB : [MongoDB Documentation (TR)](Tr/mongo_documentation.md)
 
+Postman Documentation: https://documenter.getpostman.com/view/15314178/2s9YsNfWyn
+
 ### En
 
 Nebula API allows users to manage any database they want with database data transfer information. The database can perform basic operations such as creating, updating, deleting and reading tables.
@@ -38,5 +40,6 @@ This API project allows developers to create databases quickly, securely and fle
 - Authentication & Authorization: [Auth Documentation (EN)](En/auth_documentation.md)
 - User Actions : [User Documentation (EN)](En/user_documentation.md)
 - MongoDB : [MongoDB Documentation (EN)](En/mongo_documentation.md)
-
+  
+Postman Documentation: https://documenter.getpostman.com/view/15314178/2s9YsNfWyn
 
