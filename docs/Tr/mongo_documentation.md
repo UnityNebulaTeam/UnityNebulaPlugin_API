@@ -17,7 +17,7 @@ Tüm MongoDb endpointleri kimlik doğrulama ve yetkilendirme ile korunmaktadır.
 - **Örnek Request**
 
 - Endpoint
-```[GET]  ~/api/mogno/db ```
+```[GET]  ~/api/mongo/db ```
 
 
 - **Response**
@@ -51,7 +51,7 @@ Hata:
 - **Örnek Request**
 
 - Endpoint
-```[POST]  ~/api/mogno/db ```
+```[POST]  ~/api/mongo/db ```
 
 - **Body**
 
@@ -82,7 +82,7 @@ Hata:
 - **Örnek Request**
 
 - Endpoint
-```[PUT]  ~/api/mogno/db ```
+```[PUT]  ~/api/mongo/db ```
 
 - **Body**
 ```json
@@ -195,7 +195,7 @@ Hata:
 - **Örnek Request**
 
 - Endpoint
-```[PUT]  ~/api/mogno/table ```
+```[PUT]  ~/api/mongo/table ```
 
 
 - **Response**
